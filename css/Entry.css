@@ -1,0 +1,117 @@
+html,
+body {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+.flex_container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+}
+
+.flex_item {
+	display: inline-flex;
+}
+
+.notice {
+	position: absolute;
+	left: 1rem;
+	top: 1rem;
+}
+
+.notice_text {
+	font-size: 0.5rem;
+	color: #222;
+}
+
+.bottom_style {
+	width: 100%;
+	height: 60px;
+	position: absolute;
+	bottom: 0
+}
+
+.container {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+	background-color: #F0F0F0;
+}
+
+.item {
+	margin: 0 10px
+}
+
+.full {
+	width: 100%;
+	height: 100%;
+	position: relative
+}
+
+.image_container {
+	display: 'flex';
+	width: '70%';
+	margin-left: '15%';
+	position: relative;
+	min-height: 100%;
+	flex-direction: column
+}
+
+.image_flex_container {
+	display: flex;
+	background: url(../img/maldives.jpg) no-repeat center;
+	width: 100%;
+	height: 90%;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column
+}
+
+#banner_full {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-wrap: wrap
+}
+
+.banner_chip {
+	margin: 4
+}
+
+.banner_title {
+	display: inline-flex;
+	color: #FFFFFF;
+	font-size: 2.5rem;
+	margin-bottom: .5em;
+	text-align: center
+}
+
+.banner_image_subtitle {
+	display: inline-flex;
+	color: #FFFFFF;
+	margin-bottom: .5em;
+	font-weight: normal;
+}
+
+.banner_middle_text {
+	font-size: 1rem;
+	display: inline-flex;
+	align-self: center;
+	margin-left: 1.5rem;
+	font-weight: normal;
+}
+
+.top_container {
+	background: rgb(190, 200, 200);
+	padding: 16px;
+	display: flex;
+	align-items: center;
+}
