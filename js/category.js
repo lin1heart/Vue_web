@@ -152,13 +152,14 @@ function getListResponse(response) {
 				var title = response.data[i].title;
 				pushImageList(aspectRatio, imageurl, title);
 			}
+			image_lsit.status = "loaded";
 		}else{
 			image_lsit.status = "nomore";
 		}
 	} else {
 		console.log("getList Response" + getMessage(response));
+		image_lsit.status = "loaded";
 	}
-	image_lsit.status = "loaded";
 }
 
 function getListException(exception, code, status) {

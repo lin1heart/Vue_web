@@ -6,6 +6,11 @@ body {
 	margin: 0;
 }
 
+svg path,
+svg rect {
+	fill: #48D1CC;
+}
+
 .flex_container {
 	display: flex;
 	justify-content: center;
@@ -185,26 +190,35 @@ body {
 
 .image_status {
 	display: flex;
-	height: 50px;
+	height: 35px;
 	align-items: center;
 	justify-content: center;
 	background-color: #F6F6F6;
 }
 
 .image_status:hover {
-	cursor:pointer;
+	cursor: pointer;
 	background-color: #E0EEE0;
 }
-.demo-spin-icon-load{
-    animation: ani-demo-spin 1s linear infinite;
+
+.demo-spin-icon-load {
+	animation: ani-demo-spin 1s linear infinite;
 }
+
 @keyframes ani-demo-spin {
-    from { transform: rotate(0deg);}
-    50%  { transform: rotate(180deg);}
-    to   { transform: rotate(360deg);}
+	from {
+		transform: rotate(0deg);
+	}
+	50% {
+		transform: rotate(180deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
-.demo-spin-col{
-    height: 100px;
-    position: relative;
-    border: 1px solid #eee;
+
+.demo-spin-col {
+	height: 100px;
+	position: relative;
+	border: 1px solid #eee;
 }
