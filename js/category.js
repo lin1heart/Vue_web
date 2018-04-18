@@ -1,3 +1,4 @@
+var IMAGE_URL = 'http://13.250.226.195:8888/dbImage/';
 var isClient = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
 var listNum = 0;
 $(function() {
@@ -25,6 +26,10 @@ $(window).scroll(
 			getimageList();
 		}
 	});
+
+var affix = new Vue({
+	el: '#affix'
+})
 
 var banner = new Vue({
 	el: '#banner_full',
@@ -62,6 +67,11 @@ var image_lsit = new Vue({
 		}
 	}
 })
+
+function imageclick(index){
+	doPost("getDetile", {"id": index});
+}
+
 
 //alert(image_lsit.totalWidth + image_lsit.totalLeft + isClient);
 /*******************version请求*******************************/
@@ -148,7 +158,6 @@ function getListRequest(request, form) {
 	}
 }
 
-var IMAGE_URL = 'http://13.250.226.195:8888/dbImage/';
 
 function getListResponse(response) {
 	if(response.code == "200") {
@@ -186,6 +195,20 @@ function pushImageList(aspectRatio, imageurl, title, id) {
 		icon: true
 	})
 }
-function imageclick(index){
-	alert(1);
+
+/*******************imageDetile请求*******************************/
+
+function getDetileRequest(request,form){
+	request.head.bid = "image";
+	request.head.fid = "getDetail";
+	request.head.typ = "GET";
+	request.body = {
+		id: form.id
+	}
+}
+
+function getDetileResponse(response){
+	if(response.code == "200") {
+		
+	}
 }

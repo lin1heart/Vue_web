@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+		<link rel="stylesheet" href="css/iview.css" />
+		<link rel="stylesheet" href="css/Entry.css" />
+		<title>ImageDetile</title>
+	</head>
+	<body>
+		<div id="image_detile">
+	        <!--<TopNavigator showCategory={false} />-->
+	        <section>
+	        	<div v-for="(imgs, index) in pic" :key="imgs" :prop="'pic.' + index + '.value'" class="image_Item">
+	            	<img :src="imgs.imgurl" :alt="imgs.listId" />
+	          		<br />
+	          	</div>
+	        </section>
+	        <div class="fc">
+	          	登陆之后可以查看更多哦!
+	        </div>
+        <!--<CopyRight />-->
+      </div>
+	</body>
+	<script type="text/javascript" src="js/vue.min.js"></script>
+	<script type="text/javascript" src="js/iview.min.js"></script>
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/imageDetile.js"></script>
+</html>
