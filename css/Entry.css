@@ -160,7 +160,7 @@ svg rect {
 	display: none;
 	width: 100%;
 	position: absolute;
-	height: 40px;
+	height: 35px;
 	left: 0;
 	z-index: 5;
 	-moz-transition: top ease 100ms;
@@ -170,15 +170,36 @@ svg rect {
 	background: rgba(0, 0, 0, .6);
 }
 
-
 .titleWrapper span {
 	display: block;
 	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	color: #fff;
 	padding: 0.5rem;
 	line-height: 1rem;
 	cursor: pointer;
-	/*width: 50%;*/
+	margin-right: 45px;
+	width: 80%;
+}
+
+.title_box {
+	width: 100%
+}
+
+.title_box .ivu-tooltip {
+	width: 100%
+}
+
+.title_box .ivu-tooltip .ivu-tooltip-rel {
+	width: 100%;
+}
+
+.icon_like {
+	position: absolute;
+	right: 10px;
+	top: 5px;
+	bottom: 5px;
 }
 
 

@@ -35,18 +35,20 @@
 						<i :style="{'paddingBottom': imgs.ipadding}"></i>
 						<img :src="imgs.imgurl" :alt="imgs.listId" />
 						<div class="titleWrapper">
-							<Tooltip :content="imgs.title" placement="top-start">
-								<span>{{imgs.title}}</span>
-							</Tooltip>
-							<div style="position: absolute; right: 0;" @click="iconClick($event,index)">
+							<div class="title_box">
+								<Tooltip :content="imgs.title" placement="top-start">
+									<span>{{imgs.title}}</span>
+								</Tooltip>
+							</div>
+							<div class="icon_like" @click="iconClick($event,index)">
 								<template v-if="imgs.icon">
-									<Tooltip content="喜欢" placement="top-end">
-										<Icon type="ios-heart-outline" size="30" style="margin-right: 15px; cursor: pointer" color="#F0F0F0"></Icon>
+									<Tooltip content="喜欢" placement="top">
+										<Icon type="ios-heart-outline" size="30" style="cursor: pointer" color="#F0F0F0"></Icon>
 									</Tooltip>
 								</template>
 								<template v-else>
-									<Tooltip content="不喜欢了" placement="top-end">
-										<Icon type="ios-heart" size="30" style="margin-right: 15px; cursor: pointer" color="#778899"></Icon>
+									<Tooltip content="不喜欢了" placement="top">
+										<Icon type="ios-heart" size="30" style="cursor: pointer" color="#778899"></Icon>
 									</Tooltip>
 								</template>
 							</div>
