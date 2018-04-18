@@ -50,7 +50,15 @@ var image_lsit = new Vue({
 			}
 		},
 		imageclick: function(index){
-			alert(index);
+			imageclick(index);
+		},
+		iconClick: function(e,index){
+			e.stopPropagation();//阻止冒泡，防止触发父级div的click事件
+			if(this.$data.pic[index].icon){
+				this.$data.pic[index].icon = false;
+			}else{
+				this.$data.pic[index].icon = true;
+			}
 		}
 	}
 })
@@ -150,7 +158,8 @@ function getListResponse(response) {
 				var aspectRatio = response.data[i].width / response.data[i].height;
 				var imageurl = IMAGE_URL + response.data[i].headImage;
 				var title = response.data[i].title;
-				pushImageList(aspectRatio, imageurl, title);
+				var id = response.data[i].id;
+				pushImageList(aspectRatio, imageurl, title, id);
 			}
 			image_lsit.status = "loaded";
 		}else{
@@ -166,12 +175,17 @@ function getListException(exception, code, status) {
 	console.log("getList 请求发送失败:" + exception, code, status);
 }
 
-function pushImageList(aspectRatio, imageurl, title) {
+function pushImageList(aspectRatio, imageurl, title, id) {
 	image_lsit.$data.pic.push({
 		aspectRatioWidth: aspectRatio * 200 + 'px',
 		aspectRatioFlex: aspectRatio * 200,
 		ipadding: 1 / aspectRatio * 100 + '%',
 		imgurl: imageurl,
-		title: title
+		title: title,
+		listId: id,
+		icon: true
 	})
+}
+function imageclick(index){
+	alert(1);
 }

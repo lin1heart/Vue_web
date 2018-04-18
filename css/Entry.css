@@ -141,8 +141,8 @@ svg rect {
 }
 
 .itemContainer:hover .titleWrapper {
-	top: 85%;
 	display: flex;
+	bottom: 0;
 }
 
 .image_list_container i {
@@ -160,7 +160,7 @@ svg rect {
 	display: none;
 	width: 100%;
 	position: absolute;
-	height: 15%;
+	height: 40px;
 	left: 0;
 	z-index: 5;
 	-moz-transition: top ease 100ms;
@@ -170,23 +170,19 @@ svg rect {
 	background: rgba(0, 0, 0, .6);
 }
 
-.titleText {
+
+.titleWrapper span {
 	display: block;
 	overflow: hidden;
 	color: #fff;
 	padding: 0.5rem;
 	line-height: 1rem;
-}
-
-.titleWrapper i {
-	color: #fff;
-	font-size: 20px;
 	cursor: pointer;
-	margin: 0 0px;
+	/*width: 50%;*/
 }
 
 
-/*image Status*/
+/*image loading Status*/
 
 .image_status {
 	display: flex;
@@ -199,26 +195,4 @@ svg rect {
 .image_status:hover {
 	cursor: pointer;
 	background-color: #E0EEE0;
-}
-
-.demo-spin-icon-load {
-	animation: ani-demo-spin 1s linear infinite;
-}
-
-@keyframes ani-demo-spin {
-	from {
-		transform: rotate(0deg);
-	}
-	50% {
-		transform: rotate(180deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
-}
-
-.demo-spin-col {
-	height: 100px;
-	position: relative;
-	border: 1px solid #eee;
 }
