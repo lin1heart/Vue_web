@@ -119,8 +119,14 @@ svg rect {
 	padding: 16px;
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 }
 
+
+.login_icon {
+	display: flex;
+	cursor: pointer;
+}
 
 /*image List*/
 

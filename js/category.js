@@ -39,6 +39,8 @@ var category = new Vue({
 		onlineCount: "", //banner
 		dbCount: "",
 		selfCount: "",
+		login: false,
+		login_user: '欢迎',
 		totalWidth: isClient ? '100%' : '70%',//image_list
 		totalLeft: isClient ? 0 : '15%',
 		pic: [],
@@ -51,6 +53,9 @@ var category = new Vue({
 			if(this.$data.status === 'loaded'){
 				getimageList();
 			}
+		},
+		login_click: function(){
+			this.login = !this.login;
 		},
 		imageclick: function(index){
 			showDetail(index);
