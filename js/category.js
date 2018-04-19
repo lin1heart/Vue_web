@@ -9,7 +9,7 @@ $(function() {
 	//	doPost('login',{"username":"111","password":"123"});
 })
 function getimageList(){
-	image_lsit.$data.status = "loading";
+	category.$data.status = "loading";
 	doPost("getList", {
 		"pageIndex": String(listNum),
 		"pageSize": "10",
@@ -18,36 +18,33 @@ function getimageList(){
 	listNum++;
 }
 
-$(window).scroll(
-	function() {
-		var scrollTop = $(this).scrollTop();
-		var scrollHeight = $(document).height();
-		var windowHeight = $(this).height();
-		if(scrollTop + windowHeight >= scrollHeight &&image_lsit.status === 'loaded') {
-			getimageList();
-		}
-	});
-
-var affix = new Vue({
-	el: '#affix'
-})
-
-var banner = new Vue({
-	el: '#banner_full',
-	data: {
-		onlineCount: "",
-		dbCount: "",
-		selfCount: ""
+$(window).scroll(function() {
+	var scrollTop = $(this).scrollTop();
+	var scrollHeight = $(document).height();
+	var windowHeight = $(this).height();
+	if(scrollTop + windowHeight >= scrollHeight &&category.status === 'loaded') {
+		getimageList();
 	}
-})
+});
 
-var image_lsit = new Vue({
-	el: '#image_container',
+window.onbeforeunload = function(){
+      //刷新后页面自动回到顶部
+    document.documentElement.scrollTop = 0;  //ie下
+    document.body.scrollTop = 0;  //非ie
+ }
+
+var category = new Vue({
+	el: '#category',
 	data: {
-		totalWidth: isClient ? '100%' : '70%',
+		onlineCount: "", //banner
+		dbCount: "",
+		selfCount: "",
+		totalWidth: isClient ? '100%' : '70%',//image_list
 		totalLeft: isClient ? 0 : '15%',
 		pic: [],
-		status: 'loaded'
+		status: 'loaded',
+		lists:[],//image_detile
+		detile: false
 	},
 	methods:{
 		load: function(){
@@ -65,6 +62,9 @@ var image_lsit = new Vue({
 			}else{
 				this.$data.pic[index].icon = true;
 			}
+		},
+		back: function(){
+			showDetailModel(false,false)
 		}
 	}
 })
@@ -80,14 +80,13 @@ function showDetail(index) {
 }
 function showDetailModel(flag, reload) {
 	if(flag) {
-		$('#category').css("display", "none");
-		$('#imageDetailModel').css("display", "block");
+		category.$data.detile = true;
 		if(reload) {
-			$('#image_detile_frame').attr('src','imageDetile.html')
+			category.$data.lists = [];
+			doPost("getDetile", {"id": CHOICED_ID});
 		}
 	} else {
-		$('#category').css("display", "block");
-		$('#imageDetailModel').css("display", "none");
+		category.$data.detile = false;
 	}
 }
 
@@ -103,9 +102,9 @@ function versionRequest(request, form) {
 function versionResponse(response) {
 	if(response.code == "200") {
 		var data = response.data;
-		banner.dbCount = data.dbCount;
-		banner.onlineCount = data.onlineCount;
-		banner.selfCount = data.selfCount;
+		category.dbCount = data.dbCount;
+		category.onlineCount = data.onlineCount;
+		category.selfCount = data.selfCount;
 	} else {
 		console.log("version Response:" + getMessage(response));
 	}
@@ -187,13 +186,13 @@ function getListResponse(response) {
 				var id = response.data[i].id;
 				pushImageList(aspectRatio, imageurl, title, id);
 			}
-			image_lsit.status = "loaded";
+			category.status = "loaded";
 		}else{
-			image_lsit.status = "nomore";
+			category.status = "nomore";
 		}
 	} else {
 		console.log("getList Response" + getMessage(response));
-		image_lsit.status = "loaded";
+		category.status = "loaded";
 	}
 }
 
@@ -202,7 +201,7 @@ function getListException(exception, code, status) {
 }
 
 function pushImageList(aspectRatio, imageurl, title, id) {
-	image_lsit.$data.pic.push({
+	category.$data.pic.push({
 		aspectRatioWidth: aspectRatio * 200 + 'px',
 		aspectRatioFlex: aspectRatio * 200,
 		ipadding: 1 / aspectRatio * 100 + '%',
@@ -211,4 +210,30 @@ function pushImageList(aspectRatio, imageurl, title, id) {
 		listId: id,
 		icon: true
 	})
+}
+
+
+/*******************imageDetile请求*******************************/
+
+function getDetileRequest(request,form){
+	request.head.bid = "image";
+	request.head.fid = "getDetail";
+	request.head.typ = "GET";
+	request.body = {
+		id: form.id
+	}
+}
+
+function getDetileResponse(response){
+	if(response.code == "200") {
+		if(response.data){
+			for(var i = 0; i < response.data.length; i++) {
+				category.$data.lists.push({
+					imgurl: IMAGE_URL + response.data[i].url,
+					id: response.data[i].imageListId
+				})
+			}
+		}
+		
+	}
 }

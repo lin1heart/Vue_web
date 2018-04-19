@@ -237,7 +237,7 @@ svg rect {
 }
 
 
-#image_detile section {
+#image_detile .imgs {
 	background-color: #f6f6f6;
 	flex-direction: column;
 	padding: 0 10%;
@@ -249,7 +249,7 @@ svg rect {
 
 #image_detile img {
 	width: 100%;
-	margin-top: 16;
+	margin-top: 16px;
 	border: 1px #ffa11a solid;
 	border-radius: 8px
 }

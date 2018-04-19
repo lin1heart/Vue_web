@@ -12,12 +12,7 @@ function doPost(event, data) {
 	var bid = "/" + head.bid;
 	var fid = "/" + head.fid;
 	var type = head.typ;
-	var da;
-//	if(type.toUpperCase() =="GET"){
-		da = request.body;		
-//	}else if(type.toUpperCase() =="POST"){
-//		da = JSON.stringify(request.body);		
-//	}
+	var da = request.body;		
 	if(da == "{}"){
 		da = "";
 	}
@@ -27,7 +22,6 @@ function doPost(event, data) {
 		async:true,
 		contentType: 'application/x-www-form-urlencoded',
 		data: da,
-//		dataType: "json",
 		success: function(response, status, xhr) {
 			invokeEventMethod(event, "Response", [response, data]);
 		},

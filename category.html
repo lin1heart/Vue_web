@@ -12,91 +12,111 @@
 
 	<body>
 		<section id="category" class="full">
-			<div id="banner_full">
-				<div class="image_flex_container">
-					<h1 class="banner_title">welcome to maldives holiday</h1>
-					<h3 class="banner_image_subtitle">現在の人数: {{onlineCount}}</h3>
-					<h3 class="banner_image_subtitle">累計人数: {{dbCount}}</h3>
-					<h3 class="banner_image_subtitle">自分タイムズ: {{selfCount}}</h3>
+			<template v-if="!detile">
+				<div id="banner_full">
+					<div class="image_flex_container">
+						<h1 class="banner_title">welcome to maldives holiday</h1>
+						<h3 class="banner_image_subtitle">現在の人数: {{onlineCount}}</h3>
+						<h3 class="banner_image_subtitle">累計人数: {{dbCount}}</h3>
+						<h3 class="banner_image_subtitle">自分タイムズ: {{selfCount}}</h3>
+					</div>
+					<div style="height: 10%; display: flex ">
+						<h3 class="banner_middle_text">拯救世界银河小分队的密码花园</h3>
+					</div>
 				</div>
-				<div style="height: 10%; display: flex ">
-					<h3 class="banner_middle_text">拯救世界银河小分队的密码花园</h3>
-				</div>
-			</div>
+			</template>
 			<div id="affix">
 				<Affix>
-					<header class="top_container">123
-						<!--<Logo containerStyle={{ display: 'inline' }} />
-						<FlatButton label="BACK" onClick={this._back} />
-						<Avatar />-->
+					<header class="top_container">
+						<i-button type="text" @click="back">back</i-button>
 					</header>
 				</Affix>
 			</div>
-			<div id="image_container" :style="{marginLeft: totalLeft,'width': totalWidth}">
-				<section class="image_list_container">
-					<div v-for="(imgs, index) in pic" @click="imageclick(imgs.listId)" :key="imgs" :prop="'pic.' + index + '.value'" class="itemContainer" :style="{'width': imgs.aspectRatioWidth,'flexGrow': imgs.aspectRatioFlex }">
-						<i :style="{'paddingBottom': imgs.ipadding}"></i>
-						<img :src="imgs.imgurl" :alt="imgs.listId" />
-						<div class="titleWrapper">
-							<div class="title_box">
-								<Tooltip :content="imgs.title" placement="top-start">
-									<span>{{imgs.title}}</span>
-								</Tooltip>
-							</div>
-							<div class="icon_like" @click="iconClick($event,index)">
-								<template v-if="imgs.icon">
-									<Tooltip content="喜欢" placement="top">
-										<!--<Icon type="ios-heart-outline" size="30" style="cursor: pointer" color="#F0F0F0"></Icon>-->
-										<svg fill="#F0F0F0" height="24" style="cursor: pointer" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-										    <path d="M0 0h24v24H0z" fill="none"/>
-										    <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/>
-										</svg>
+			<template v-if="!detile">
+				<div id="image_container" :style="{marginLeft: totalLeft,'width': totalWidth}">
+					<section class="image_list_container">
+						<div v-for="(imgs, index) in pic" @click="imageclick(imgs.listId)" :key="imgs" :prop="'pic.' + index + '.value'" class="itemContainer" :style="{'width': imgs.aspectRatioWidth,'flexGrow': imgs.aspectRatioFlex }">
+							<i :style="{'paddingBottom': imgs.ipadding}"></i>
+							<img :src="imgs.imgurl" :alt="imgs.listId" />
+							<div class="titleWrapper">
+								<div class="title_box">
+									<Tooltip :content="imgs.title" placement="top-start">
+										<span>{{imgs.title}}</span>
 									</Tooltip>
-								</template>
-								<template v-else>
-									<Tooltip content="不喜欢了" placement="top">
-										<!--<Icon type="ios-heart" size="30" style="cursor: pointer" color="#778899"></Icon>-->
-										<svg fill="#778899" height="24" style="cursor: pointer" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-										    <path d="M0 0h24v24H0z" fill="none"/>
-										    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-										</svg>
-									</Tooltip>
-								</template>
+								</div>
+								<div class="icon_like" @click="iconClick($event,index)">
+									<template v-if="imgs.icon">
+										<Tooltip content="喜欢" placement="top">
+											<!--<Icon type="ios-heart-outline" size="30" style="cursor: pointer" color="#F0F0F0"></Icon>-->
+											<svg fill="#F0F0F0" height="24" style="cursor: pointer" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+											    <path d="M0 0h24v24H0z" fill="none"/>
+											    <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/>
+											</svg>
+										</Tooltip>
+									</template>
+									<template v-else>
+										<Tooltip content="不喜欢了" placement="top">
+											<!--<Icon type="ios-heart" size="30" style="cursor: pointer" color="#778899"></Icon>-->
+											<svg fill="#778899" height="24" style="cursor: pointer" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+											    <path d="M0 0h24v24H0z" fill="none"/>
+											    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+											</svg>
+										</Tooltip>
+									</template>
+								</div>
 							</div>
 						</div>
-					</div>
-				</section>
-				<template v-if="status==='loaded'">
-					<div class="image_status" @click="load">
-						加载更多
-					</div>
-				</template>
-				<template v-if="status==='nomore'">
-					<div class="image_status" @click="load">
-						没有更多了！
-					</div>
-				</template>
-				<template v-if="status==='loading'">
-					<div class="image_status">
-						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-							<rect x="0" y="0" width="4" height="10" fill="#333" transform="translate(0 15.1665)">
-								<animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0" dur="0.6s" repeatCount="indefinite"></animateTransform>
-							</rect>
-							<rect x="10" y="0" width="4" height="10" fill="#333" transform="translate(0 11.5002)">
-								<animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0.2s" dur="0.6s" repeatCount="indefinite"></animateTransform>
-							</rect>
-							<rect x="20" y="0" width="4" height="10" fill="#333" transform="translate(0 1.83315)">
-								<animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0.4s" dur="0.6s" repeatCount="indefinite"></animateTransform>
-							</rect>
-						</svg>
-					</div>
-				</template>
+					</section>
+					<template v-if="status==='loaded'">
+						<div class="image_status" @click="load">
+							加载更多
+						</div>
+					</template>
+					<template v-if="status==='nomore'">
+						<div class="image_status" @click="load">
+							没有更多了！
+						</div>
+					</template>
+					<template v-if="status==='loading'">
+						<div class="image_status">
+							<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+								<rect x="0" y="0" width="4" height="10" fill="#333" transform="translate(0 15.1665)">
+									<animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0" dur="0.6s" repeatCount="indefinite"></animateTransform>
+								</rect>
+								<rect x="10" y="0" width="4" height="10" fill="#333" transform="translate(0 11.5002)">
+									<animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0.2s" dur="0.6s" repeatCount="indefinite"></animateTransform>
+								</rect>
+								<rect x="20" y="0" width="4" height="10" fill="#333" transform="translate(0 1.83315)">
+									<animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0.4s" dur="0.6s" repeatCount="indefinite"></animateTransform>
+								</rect>
+							</svg>
+						</div>
+					</template>
 				<!--<DrawMenu />-->
-			</div>
+				</div>
+			</template>
+			<template v-if="detile">
+				<div id="image_detile">
+			        <section class="imgs">
+			        	<div v-for="(list, index) in lists" :key="list" :prop="'lists.' + index + '.value'">
+			            	<img :src="list.imgurl" :alt="list.id" />
+			          		<br />
+			          	</div>
+				        <div class="bottom">
+				          	登陆之后可以查看更多哦!
+				        </div>
+			        </section>
+			        <div class="bottom_style">
+						<section class="container">
+							<span class="item">CopyRight</span>
+							<span class="item">github</span>
+							<span class="item">version</span>
+							<span class="item">contact</span>
+						</section>
+					</div>
+		        </div>
+			</template>
 		</section>
-		<div id="imageDetailModel" style="width: 100%; height: 95%; display: none;">
-			<iframe id="image_detile_frame" frameborder="0" style="width: 100%; height: 100%; border: none;"></iframe>
-		</div>
 	</body>
 	<!--<script type="text/javascript" src="http://vuejs.org/js/vue.min.js"></script>-->
 	<script type="text/javascript" src="js/vue.min.js"></script>
