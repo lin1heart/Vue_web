@@ -7,20 +7,31 @@
 		<link rel="stylesheet" href="css/Entry.css" />
 		<title>ImageDetile</title>
 	</head>
-	<body>
+	<body style="height: auto;">
 		<div id="image_detile">
-	        <!--<TopNavigator showCategory={false} />-->
+				<Affix>
+					<header class="top_container">
+						<i-button type="text" @click="back">back</i-button>
+					</header>
+				</Affix>
 	        <section>
-	        	<div v-for="(imgs, index) in pic" :key="imgs" :prop="'pic.' + index + '.value'" class="image_Item">
-	            	<img :src="imgs.imgurl" :alt="imgs.listId" />
+	        	<div v-for="(imgs, index) in pic" :key="imgs" :prop="'pic.' + index + '.value'">
+	            	<img :src="imgs.imgurl" :alt="imgs.id" />
 	          		<br />
 	          	</div>
-	        </section>
-	        <div class="fc">
+	        <div class="bottom">
 	          	登陆之后可以查看更多哦!
 	        </div>
-        <!--<CopyRight />-->
+	        </section>
       </div>
+        <div class="bottom_style">
+			<section class="container">
+				<span class="item">CopyRight</span>
+				<span class="item">github</span>
+				<span class="item">version</span>
+				<span class="item">contact</span>
+			</section>
+		</div>
 	</body>
 	<script type="text/javascript" src="js/vue.min.js"></script>
 	<script type="text/javascript" src="js/iview.min.js"></script>

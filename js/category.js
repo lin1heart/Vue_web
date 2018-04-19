@@ -1,6 +1,7 @@
 var IMAGE_URL = 'http://13.250.226.195:8888/dbImage/';
 var isClient = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
 var listNum = 0;
+var CHOICED_ID;
 $(function() {
 	//	doPost('version');
 	getimageList();
@@ -55,7 +56,7 @@ var image_lsit = new Vue({
 			}
 		},
 		imageclick: function(index){
-			imageclick(index);
+			showDetail(index);
 		},
 		iconClick: function(e,index){
 			e.stopPropagation();//阻止冒泡，防止触发父级div的click事件
@@ -68,10 +69,27 @@ var image_lsit = new Vue({
 	}
 })
 
-function imageclick(index){
-	doPost("getDetile", {"id": index});
-}
 
+function showDetail(index) {
+	if(index!=CHOICED_ID){
+		CHOICED_ID = index;
+		showDetailModel(true, true);
+	} else {
+		showDetailModel(true, false);
+	}
+}
+function showDetailModel(flag, reload) {
+	if(flag) {
+		$('#category').css("display", "none");
+		$('#imageDetailModel').css("display", "block");
+		if(reload) {
+			$('#image_detile_frame').attr('src','imageDetile.html')
+		}
+	} else {
+		$('#category').css("display", "block");
+		$('#imageDetailModel').css("display", "none");
+	}
+}
 
 //alert(image_lsit.totalWidth + image_lsit.totalLeft + isClient);
 /*******************version请求*******************************/
@@ -161,7 +179,6 @@ function getListRequest(request, form) {
 
 function getListResponse(response) {
 	if(response.code == "200") {
-		var imageList = [];
 		if(response.data){
 			for(var i = 0; i < response.data.length; i++) {
 				var aspectRatio = response.data[i].width / response.data[i].height;
@@ -194,21 +211,4 @@ function pushImageList(aspectRatio, imageurl, title, id) {
 		listId: id,
 		icon: true
 	})
-}
-
-/*******************imageDetile请求*******************************/
-
-function getDetileRequest(request,form){
-	request.head.bid = "image";
-	request.head.fid = "getDetail";
-	request.head.typ = "GET";
-	request.body = {
-		id: form.id
-	}
-}
-
-function getDetileResponse(response){
-	if(response.code == "200") {
-		
-	}
 }

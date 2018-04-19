@@ -38,7 +38,7 @@ svg rect {
 .bottom_style {
 	width: 100%;
 	height: 60px;
-	position: absolute;
+	position: fixed;
 	bottom: 0
 }
 
@@ -222,36 +222,34 @@ svg rect {
 /*image detile*/
 
 #image_detile {
-	background-color: #f6f6f6;
 	width: 100%;
 	height: 100%;
 }
 
-#image_detile .ad {
-	border: 1px solid #ffa11a;
-	height: 40;
-	width: 100%;
-}
 
-#image_detile .fc {
+#image_detile .bottom {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding: 16;
+  padding-top: 16px;
+  padding-bottom: 76px;
 }
 
-/*header: { width: '100%' },*/
 
 #image_detile section {
+	background-color: #f6f6f6;
 	flex-direction: column;
 	padding: 0 10%;
 	display: inline-flex;
 	flex: 1;
+	width: 100%;
+	height: 100%;
 }
 
-#image_detile .image_Item {
+#image_detile img {
 	width: 100%;
-	margin-top: 16, border: 1px #ffa11a solid;
-	border-radius: 8
+	margin-top: 16;
+	border: 1px #ffa11a solid;
+	border-radius: 8px
 }
