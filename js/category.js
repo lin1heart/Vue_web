@@ -40,8 +40,13 @@ window.onbeforeunload = function() {
 var category = new Vue({
 	el: '#category',
 	data: {
+		chatRoom: false,
 		signin: false,
 		signup: false,
+		chatRoomForm: {
+			room: '',
+			chat: ''
+		},
 		signinForm: {
 			username: '',
 			password: ''
@@ -158,13 +163,19 @@ var category = new Vue({
 		menu_show: function() {
 			this.$data.menu = !this.$data.menu;
 		},
+		ok: function(){
+			var content = this.$data.chatRoomForm.chat;
+			stompClient.send("/ws/chat", {}, JSON.stringify({'content':content }));
+		},
 		chatroom: function() {
 			if(this.$data.login) {
-				if(!this.$data.chatCount) {
-					this.$data.chatCount = 1;
-				} else {
-					this.$data.chatCount += 1;
-				}
+				this.chatRoom = true;
+				chatroom();
+//				if(!this.$data.chatCount) {
+//					this.$data.chatCount = 1;
+//				} else {
+//					this.$data.chatCount += 1;
+//				}
 			} else {
 				this.$Message.warning('pleaase login');
 			}
@@ -375,8 +386,33 @@ function connect() {
 //聊天室订阅
 function chatroom() {
 	stompClient.subscribe('/topic/chatRoom', function(respnose) {
-		showResponse2(JSON.parse(respnose.body).responseMessage);
+		showResponse(JSON.parse(respnose.body));
 	});
+}
+
+function showResponse(res){
+	if(res.type == "chat"){
+		var name = res.data.name;
+		var cont = res.data.content;
+		var time = formatDateTime(res.data.timestamp);
+		category.$data.chatRoomForm.room += name + "|" + new Date(time) + "\n" + cont + "\n"; 
+	}
+}
+
+function formatDateTime(time) {    
+    var date = new Date(time/1000);  
+    var y = date.getFullYear();    
+    var m = date.getMonth() + 1;    
+    m = m < 10 ? ('0' + m) : m;    
+    var d = date.getDate();    
+    d = d < 10 ? ('0' + d) : d;    
+    var h = date.getHours();  
+    h = h < 10 ? ('0' + h) : h;  
+    var minute = date.getMinutes();  
+    var second = date.getSeconds();  
+    minute = minute < 10 ? ('0' + minute) : minute;    
+    second = second < 10 ? ('0' + second) : second;   
+    return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;    
 }
 
 //私聊 订阅自己 登录时

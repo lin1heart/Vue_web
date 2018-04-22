@@ -101,6 +101,18 @@
 		            <!--</div>-->
 		        </div>
 		    </Modal>
+		    <Modal v-model="chatRoom" title="chatRoom" @on-ok="ok">
+				<div>
+					<i-form ref="chatRoomForm" :model="chatRoomForm">
+				        <Form-Item prop="room">
+				            <i-input type="textarea" v-model="chatRoomForm.room" :autosize="{minRows: 5,maxRows: 5}" readonly></i-input>
+				        </Form-Item>
+				        <Form-Item prop="chat">
+				            <i-input type="textarea" v-model="chatRoomForm.chat" :autosize="{minRows: 5,maxRows: 5}" placeholder="please input something..."></i-input>
+				        </Form-Item>
+				    </i-form>
+			    </div>
+			</Modal>
 			<template v-if="!detile">
 				<div id="image_container" :style="{marginLeft: totalLeft,'width': totalWidth}">
 					<section class="image_list_container">
