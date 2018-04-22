@@ -22,6 +22,7 @@ function doPost(event, data) {
 		async:true,
 		contentType: 'application/x-www-form-urlencoded',
 		data: da,
+		xhrFields: {withCredentials: true},
 		success: function(response, status, xhr) {
 			invokeEventMethod(event, "Response", [response, data]);
 		},

@@ -1,4 +1,5 @@
 var IMAGE_URL = 'http://13.250.226.195:8888/dbImage/';
+var WS_URL = "ws://127.0.0.1:8080/ws";
 var isClient = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
 var listNum = 0;
 var CHOICED_ID;
@@ -39,9 +40,64 @@ window.onbeforeunload = function() {
 var category = new Vue({
 	el: '#category',
 	data: {
+		signin: false,
+		signup: false,
+		signinForm: {
+			username: '',
+			password: ''
+		},
+		signupForm: {
+			signusername: '',
+			signpassword: '',
+			mail: ''
+		},
+		ruleInline: {
+			username: [{
+				required: true,
+				message: 'Please fill in the user name',
+				trigger: 'blur'
+			}],
+			password: [{
+					required: true,
+					message: 'Please fill in the password.',
+					trigger: 'blur'
+				},
+				{
+					type: 'string',
+					min: 3,
+					message: 'The password length cannot be less than 3 bits',
+					trigger: 'blur'
+				}
+			]
+		},
+		ruleInSignup: {
+			signusername: [{
+				required: true,
+				message: 'Please fill in the user name',
+				trigger: 'blur'
+			}],
+			signpassword: [{
+					required: true,
+					message: 'Please fill in the password.',
+					trigger: 'blur'
+				},
+				{
+					type: 'string',
+					min: 3,
+					message: 'The password length cannot be less than 3 bits',
+					trigger: 'blur'
+				}
+			],
+			mail: [{
+				required: true,
+				message: 'Please fill in the mail.',
+				trigger: 'blur'
+			}]
+		},
 		onlineCount: "", //banner
 		dbCount: "",
 		selfCount: "",
+		self_count: false,
 		login: false,
 		login_user: '欢迎',
 		chatCount: '',
@@ -54,13 +110,36 @@ var category = new Vue({
 		detile: false
 	},
 	methods: {
+		signin_click: function(name) {
+			if(this.$data.signup){
+				this.$data.signup = false;
+			}else{
+				this.$refs[name].validate(function(valid) {
+					if(valid) {
+						doPost('login',category.$data.signinForm);
+						this.$Message.success('Success!');
+					}
+				})				
+			}
+		},
+		signup_click: function(name){
+			if(!this.$data.signup){
+				this.$data.signup = true;				
+			}else{
+				this.$refs[name].validate(function(valid) {
+					if(valid) {
+						doPost('register',category.$data.signupForm);
+					}
+				})
+			}
+		},
 		load: function() {
 			if(this.$data.status === 'loaded') {
 				getimageList();
 			}
 		},
 		login_click: function() {
-			this.login = !this.login;
+			this.signin = true;
 		},
 		imageclick: function(index) {
 			showDetail(index);
@@ -76,17 +155,17 @@ var category = new Vue({
 		back: function() {
 			showDetailModel(false, false)
 		},
-		menu_show: function(){
+		menu_show: function() {
 			this.$data.menu = !this.$data.menu;
 		},
-		chatroom: function(){
-			if(this.$data.login){
-				if(!this.$data.chatCount){
+		chatroom: function() {
+			if(this.$data.login) {
+				if(!this.$data.chatCount) {
 					this.$data.chatCount = 1;
-				}else{
+				} else {
 					this.$data.chatCount += 1;
-				}				
-			}else{
+				}
+			} else {
 				this.$Message.warning('pleaase login');
 			}
 		}
@@ -128,16 +207,24 @@ function versionRequest(request, form) {
 function versionResponse(response) {
 	if(response.code == "200") {
 		var data = response.data;
-		versionData(data);
+		versionData(data,1);
 	} else {
 		console.log("version Response:" + getMessage(response));
 	}
 }
 
-function versionData(data) {
+function versionData(data,flag) {
 	category.dbCount = data.dbCount;
 	category.onlineCount = data.onlineCount;
-	category.selfCount = data.selfCount;
+	if(flag){
+		category.selfCount = data.selfCount;		
+	}
+	if(data.name != "guest"){
+		category.$Message.success("欢迎回来" + data.name);
+		category.$data.self_count = true;
+		category.$data.login = true;
+		category.$data.login_user = data.name;
+	}
 }
 
 function versionException(exception, code, status) {
@@ -157,10 +244,12 @@ function loginRequest(request, form) {
 
 function loginResponse(response) {
 	if(response.code == "200") {
-		console.log("login:" + response);
-
+		category.$data.login = true;
+		category.$data.signin = false;
+		category.$data.self_count = true;
+		doPost('version');
 	} else {
-		console.log("login Response" + getMessage(response));
+		category.$Message.error(getMessage(response));
 	}
 }
 
@@ -174,8 +263,8 @@ function registerRequest(request, form) {
 	request.head.fid = "register";
 	request.head.typ = "POST";
 	request.body = {
-		username: form.username,
-		password: form.password,
+		username: form.signusername,
+		password: form.signpassword,
 		mail: form.mail
 	}
 }
@@ -183,7 +272,7 @@ function registerRequest(request, form) {
 function registerResponse(response) {
 	if(response.code == "200") {
 		console.log("register:" + response);
-
+		category.$Message.success(getMessage(response));
 	} else {
 		console.log("register Response" + getMessage(response));
 	}
@@ -268,12 +357,17 @@ function getDetileResponse(response) {
 
 //socket连接 默认订阅/topic/getResponse 来获取version的更新
 function connect() {
-	stompClient = Stomp.client('ws://127.0.0.1:8080/ws'); //1连接SockJS的endpoint
+	stompClient = Stomp.client(WS_URL); //1连接SockJS的endpoint
 	stompClient.connect({}, function(frame) { //3连接webSocket的服务端。
 		console.log('开始进行连接Connected: ' + frame);
 		//通过stompClient.subscribe（）订阅服务器的目标是'/topic/getResponse'发送过来的地址，与@SendTo中的地址对应。
-		stompClient.subscribe('/topic/getResponse', function(respnose) {
-			versionData(JSON.parse(respnose.body).response);
+		stompClient.subscribe('/topic/version', function(respnose) {
+			var da = JSON.parse(respnose.body);
+			if(da.type == "version"){
+				versionData(da.data,0);
+			}else{
+				console.log(da);
+			}
 		});
 	});
 }
@@ -286,7 +380,7 @@ function chatroom() {
 }
 
 //私聊 订阅自己 登录时
-function connectUser(username){
+function connectUser(username) {
 	//通过stompClient.subscribe（）订阅服务器的目标是'/user/' + userId + '/msg'接收一对一的推送消息,其中userId由服务端传递过来,用于表示唯一的用户,通过此值将消息精确推送给一个用户
 	stompClient.subscribe('/user/' + username + '/msg', function(respnose) {
 		console.log(respnose);

@@ -18,7 +18,9 @@
 						<h1 class="banner_title">welcome to maldives holiday</h1>
 						<h3 class="banner_image_subtitle">現在の人数: {{onlineCount}}</h3>
 						<h3 class="banner_image_subtitle">累計人数: {{dbCount}}</h3>
-						<h3 class="banner_image_subtitle">自分タイムズ: {{selfCount}}</h3>
+						<template v-if="self_count">							
+							<h3 class="banner_image_subtitle">自分タイムズ: {{selfCount}}</h3>
+						</template>
 					</div>
 					<div style="height: 10%; display: flex ">
 						<h3 class="banner_middle_text">拯救世界银河小分队的密码花园</h3>
@@ -52,6 +54,53 @@
 					</header>
 				</Affix>
 			</div>
+			<Modal v-model="signin" title="sign in and sign up" width="300">
+				<template v-if="!signup">
+					<div>
+					<i-form ref="signinForm" :model="signinForm" :rules="ruleInline">
+				        <Form-Item prop="username">
+				            <i-input type="text" v-model="signinForm.username" placeholder="Username or mail">
+				                <Icon type="ios-person-outline" slot="prepend"></Icon>
+				            </i-input>
+				        </Form-Item>
+				        <Form-Item prop="password">
+				            <i-input type="password" v-model="signinForm.password" placeholder="Password">
+				                <Icon type="ios-locked-outline" slot="prepend"></Icon>
+				            </i-input>
+				        </Form-Item>
+				    </i-form>
+				    </div>
+				</template>
+				<template v-else>
+					<div>
+					<i-form ref="signupForm" :model="signupForm" :rules="ruleInSignup">
+				        <Form-Item prop="signusername">
+				            <i-input type="text" v-model="signupForm.signusername" placeholder="Username">
+				                <Icon type="ios-person-outline" slot="prepend"></Icon>
+				            </i-input>
+				        </Form-Item>
+				        <Form-Item prop="signpassword">
+				            <i-input type="password" v-model="signupForm.signpassword" placeholder="Password">
+				                <Icon type="ios-locked-outline" slot="prepend"></Icon>
+				            </i-input>
+				        </Form-Item>
+				        <Form-Item prop="mail">
+				            <i-input type="text" v-model="signupForm.mail" placeholder="mail">
+				                <Icon type="ios-email-outline" slot="prepend"></Icon>
+				            </i-input>
+				        </Form-Item>
+				    </i-form>
+				    </div>
+				</template>
+			    <div slot="footer">
+			    	<!--<div style="width: 120px;">-->
+		            	<i-button size="large" type="primary" @click="signin_click('signinForm')">Signin</i-button>
+		            <!--</div>-->
+		            <!--<div style="width: 120px;">-->
+		            	<i-button size="large" type="primary" @click="signup_click('signupForm')">Signup</i-button>
+		            <!--</div>-->
+		        </div>
+		    </Modal>
 			<template v-if="!detile">
 				<div id="image_container" :style="{marginLeft: totalLeft,'width': totalWidth}">
 					<section class="image_list_container">
@@ -116,7 +165,7 @@
 				</div>
 			</template>
 				<div style="position: absolute;right: 15px;cursor: pointer;" @click="chatroom">
-					<Affix :offset-bottom="80">
+					<Affix :offset-bottom="60">
 						 <Badge :count="chatCount">
 							<svg fill="#000000" height="35" viewBox="0 0 24 24" width="35" xmlns="http://www.w3.org/2000/svg">
 							    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/>
@@ -126,7 +175,7 @@
 					</Affix>
 				</div>
 				<div style="position: absolute;right: 15px;cursor: pointer;" @click="menu_show">
-					<Affix :offset-bottom="30">
+					<Affix :offset-bottom="10">
 						<template v-if="menu">
 							<svg fill="#000000" height="35" viewBox="0 0 24 24" width="35" xmlns="http://www.w3.org/2000/svg">
 							    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
@@ -170,6 +219,7 @@
 	<!--<script type="text/javascript" src="http://unpkg.com/iview/dist/iview.min.js"></script>-->
 	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="js/stomp.min.js" ></script>
+	<script type="text/javascript" src="js/js.cookie.min.js" ></script>
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript" src="js/category.js"></script>
 
