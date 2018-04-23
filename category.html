@@ -12,22 +12,17 @@
 
 	<body>
 		<section id="category" class="full">
-			<div id="div1" style="font-family: Arial;border: 2px solid #379082;border-radius: 1em 1em 0 0 / 3em;position: fixed; width: 300px;z-index: 100;">
+			<div id="div1" :style="{'display': chatstyle}">
 				<div id="div2" style="width: 100%;height: 30px;border-radius: 1em 1em 0 0 / 3em;background-color: rgb(111,185,230);">
 					chatroom
 				</div>
 				<div style="width: 100%;background-color: rgb(195,221,236);">
-					<i-form ref="chatRoomForm">
-				        <!--<Form-Item prop="room">-->
-				            <i-input type="textarea" v-model="chatRoomForm.room" :autosize="{minRows: 5,maxRows: 5}" readonly></i-input>
-				        <!--</Form-Item>-->
-				        <!--<Form-Item prop="chat">-->
-				            <i-input type="textarea" v-model="chatRoomForm.chat" :autosize="{minRows: 5,maxRows: 5}" placeholder="please input something..."></i-input>
-				        <!--</Form-Item>-->
-				    </i-form>
+		            <i-input type="textarea" v-model="room" :autosize="{minRows: 5,maxRows: 5}" readonly></i-input>
+		            <i-input type="textarea" v-model="chat" :autosize="{minRows: 5,maxRows: 5}" placeholder="please input something..."></i-input>
 				</div>
-					<div style="background-color: rgb(195,221,236);width: 100%;height: 30px;">
-						
+					<div style="background-color: rgb(195,221,236);width: 100%;padding: 2px;">
+						<i-button style="margin: 0 15px;" type="primary" @click="close">close</i-button>
+						<i-button style="margin: 0 15px;" type="primary" @click="ok">send</i-button>
 					</div>
 			</div>
 			<template v-if="!detile">

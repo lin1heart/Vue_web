@@ -122,11 +122,11 @@ svg rect {
 	justify-content: space-between;
 }
 
-
 .login_icon {
 	display: flex;
 	cursor: pointer;
 }
+
 
 /*image List*/
 
@@ -232,16 +232,14 @@ svg rect {
 	height: 100%;
 }
 
-
 #image_detile .bottom {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding-top: 16px;
-  padding-bottom: 76px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	padding-top: 16px;
+	padding-bottom: 76px;
 }
-
 
 #image_detile .imgs {
 	background-color: #f6f6f6;
@@ -260,9 +258,16 @@ svg rect {
 	border-radius: 8px
 }
 
-/*.div1 {
-　　　width: 300px;
-　　　height: 300px;
-　　　background-color: #CCCCCC;
-　　　position: absolute;
-}*/
+#div1 {
+	display: none;
+	font-family: Arial;
+	border: 2px solid #379082;
+	border-radius: 1em 1em 0 0 / 3em;
+	position: fixed;
+	text-align: center;
+	/*top: 0;
+	bottom: 0;
+	margin: auto;*/
+	width: 300px;
+	z-index: 100;
+}

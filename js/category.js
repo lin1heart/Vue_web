@@ -3,6 +3,7 @@ var IMAGE_URL = 'http://13.250.226.195:8888/dbImage/';
 var WS_URL = "ws://13.250.226.195:8080/ws";
 var isClient = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
 var listNum = 0;
+var chatConnect = 0;
 var CHOICED_ID;
 var stompClient = null;
 $(function() {
@@ -41,13 +42,12 @@ window.onbeforeunload = function() {
 var category = new Vue({
 	el: '#category',
 	data: {
-		chatRoom: false,
+		chatstyle: 'none',
+//		chatRoom: false,
 		signin: false,
 		signup: false,
-		chatRoomForm: {
-			room: '',
-			chat: ''
-		},
+		room: '',
+		chat: '',
 		signinForm: {
 			username: '',
 			password: ''
@@ -165,14 +165,20 @@ var category = new Vue({
 			this.$data.menu = !this.$data.menu;
 		},
 		ok: function(){
-			var content = this.$data.chatRoomForm.chat;
-			var name = this.$data.login_user;
-			stompClient.send("/ws/chat", {}, JSON.stringify({'name': name,'content':content }));
-			this.$data.chatRoomForm.chat = "";
+			if(this.chatstyle =='block'){
+				var content = this.$data.chat;
+				var name = this.$data.login_user;
+				stompClient.send("/ws/chat", {}, JSON.stringify({'name': name,'content':content }));
+				this.$data.chat = "";				
+			}
+		},
+		close: function(){
+			this.chatstyle = 'none';
 		},
 		chatroom: function() {
 			if(this.$data.login) {
-				this.chatRoom = true;
+				chatroom();
+				this.chatstyle = 'block';
 				this.chatCount = "";
 			} else {
 				this.$Message.warning('pleaase login');
@@ -232,7 +238,6 @@ function versionData(data,flag) {
 			category.$data.self_count = true;
 			category.$data.login = true;
 			category.$data.login_user = data.name;
-			chatroom();
 		}
 	}
 }
@@ -380,21 +385,25 @@ function connect() {
 				console.log(da);
 			}
 		});
+		chatroom();
 	});
 }
 
 //聊天室订阅
 function chatroom() {
-	stompClient.subscribe('/topic/chatRoom', function(respnose) {
-		if(!category.$data.chatRoom){
-			if(!category.$data.chatCount) {
-				category.$data.chatCount = 1;
-			} else {
-				category.$data.chatCount += 1;
-			}			
-		}
-		showResponse(JSON.parse(respnose.body));
-	});
+	if(!chatConnect &&category.$data.login){
+		stompClient.subscribe('/topic/chatRoom', function(respnose) {
+			if(category.$data.chatstyle =='none'){
+				if(!category.$data.chatCount) {
+					category.$data.chatCount = 1;
+				} else {
+					category.$data.chatCount += 1;
+				}			
+			}
+			showResponse(JSON.parse(respnose.body));
+		});		
+		chatConnect ++;
+	}
 }
 
 function showResponse(res){
@@ -403,7 +412,7 @@ function showResponse(res){
 		var cont = res.data.content;
 		var time = getDate(res.data.timestamp);
 		time = timeStamp2String(time,"yyyy-MM-dd hh:mm:ss");
-		category.$data.chatRoomForm.room += name + "|" + time + "\n" + cont + "\n"; 
+		category.$data.room += name + "|" + time + "\n" + cont + "\n"; 
 	}
 }
 
@@ -458,7 +467,6 @@ function connectUser(username) {
 }
 
 window.onload = function() {
-		var div1 = document.getElementById("div1");
 		var div2 = document.getElementById("div2");
 		div2.onmousedown = function(ev){
 			var oevent = ev || event;
@@ -474,18 +482,4 @@ window.onload = function() {
 				document.onmouseup = null;　　　　
 			}
 		}
-//		div1.onmousedown = function(ev) {　　　　
-//			var oevent = ev || event;
-//			var distanceX = oevent.clientX - div1.offsetLeft;　　　　
-//			var distanceY = oevent.clientY - div1.offsetTop;
-//			document.onmousemove = function(ev) {　　　　　　
-//				var oevent = ev || event;　　　　　　
-//				div1.style.left = oevent.clientX - distanceX + 'px';　　　　　　
-//				div1.style.top = oevent.clientY - distanceY + 'px';　　　　
-//			}　　　　
-//			document.onmouseup = function() {　　　　　　
-//				document.onmousemove = null;　　　　　　
-//				document.onmouseup = null;　　　　
-//			}　　
-//		}
 	}
