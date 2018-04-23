@@ -1,5 +1,6 @@
 var IMAGE_URL = 'http://13.250.226.195:8888/dbImage/';
-var WS_URL = "ws://127.0.0.1:8080/ws";
+//var WS_URL = "ws://127.0.0.1:8080/ws";
+var WS_URL = "ws://13.250.226.195:8080/ws";
 var isClient = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
 var listNum = 0;
 var CHOICED_ID;
@@ -165,17 +166,14 @@ var category = new Vue({
 		},
 		ok: function(){
 			var content = this.$data.chatRoomForm.chat;
-			stompClient.send("/ws/chat", {}, JSON.stringify({'content':content }));
+			var name = this.$data.login_user;
+			stompClient.send("/ws/chat", {}, JSON.stringify({'name': name,'content':content }));
+			this.$data.chatRoomForm.chat = "";
 		},
 		chatroom: function() {
 			if(this.$data.login) {
 				this.chatRoom = true;
-				chatroom();
-//				if(!this.$data.chatCount) {
-//					this.$data.chatCount = 1;
-//				} else {
-//					this.$data.chatCount += 1;
-//				}
+				this.chatCount = "";
 			} else {
 				this.$Message.warning('pleaase login');
 			}
@@ -229,12 +227,13 @@ function versionData(data,flag) {
 	category.onlineCount = data.onlineCount;
 	if(flag){
 		category.selfCount = data.selfCount;		
-	}
-	if(data.name != "guest"){
-		category.$Message.success("欢迎回来" + data.name);
-		category.$data.self_count = true;
-		category.$data.login = true;
-		category.$data.login_user = data.name;
+		if(data.name != "guest"){
+			category.$Message.success("欢迎回来" + data.name);
+			category.$data.self_count = true;
+			category.$data.login = true;
+			category.$data.login_user = data.name;
+			chatroom();
+		}
 	}
 }
 
@@ -258,6 +257,7 @@ function loginResponse(response) {
 		category.$data.login = true;
 		category.$data.signin = false;
 		category.$data.self_count = true;
+		chatroom();
 		doPost('version');
 	} else {
 		category.$Message.error(getMessage(response));
@@ -386,6 +386,13 @@ function connect() {
 //聊天室订阅
 function chatroom() {
 	stompClient.subscribe('/topic/chatRoom', function(respnose) {
+		if(!category.$data.chatRoom){
+			if(!category.$data.chatCount) {
+				category.$data.chatCount = 1;
+			} else {
+				category.$data.chatCount += 1;
+			}			
+		}
 		showResponse(JSON.parse(respnose.body));
 	});
 }
@@ -394,25 +401,52 @@ function showResponse(res){
 	if(res.type == "chat"){
 		var name = res.data.name;
 		var cont = res.data.content;
-		var time = formatDateTime(res.data.timestamp);
-		category.$data.chatRoomForm.room += name + "|" + new Date(time) + "\n" + cont + "\n"; 
+		var time = getDate(res.data.timestamp);
+		time = timeStamp2String(time,"yyyy-MM-dd hh:mm:ss");
+		category.$data.chatRoomForm.room += name + "|" + time + "\n" + cont + "\n"; 
 	}
 }
 
-function formatDateTime(time) {    
-    var date = new Date(time/1000);  
-    var y = date.getFullYear();    
-    var m = date.getMonth() + 1;    
-    m = m < 10 ? ('0' + m) : m;    
-    var d = date.getDate();    
-    d = d < 10 ? ('0' + d) : d;    
-    var h = date.getHours();  
-    h = h < 10 ? ('0' + h) : h;  
-    var minute = date.getMinutes();  
-    var second = date.getSeconds();  
-    minute = minute < 10 ? ('0' + minute) : minute;    
-    second = second < 10 ? ('0' + second) : second;   
-    return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;    
+/**
+ * 字符串日期转日期
+ * @param {Object} strDate
+ */
+function getDate(strDate) {
+	if(strDate != null && strDate != undefined && strDate != ""){
+		var date = eval('new Date(' + strDate.replace(/\d+(?=-[^-]+$)/,
+	    function (a) { return parseInt(a, 10) - 1; }).match(/\d+/g) + ')');
+	    return date;
+	}
+    return "";
+}
+
+/**
+ *  时间转换函数
+ * @param time 输入日期
+ * @param formatStr 转换日期的格式 "yyyy-MM-dd hh:mm:ss.S"
+ */
+function timeStamp2String(time,formatStr){
+	if(time != null && time != undefined && time != 0){
+		var datetime = new Date(time);
+	    return datetime.Format(formatStr);
+	}
+	return "";
+}
+
+Date.prototype.Format = function (fmt) {
+	var o = {
+		"M+": this.getMonth() + 1, //月份
+		"d+": this.getDate(), //日
+		"h+": this.getHours(), //小时
+		"m+": this.getMinutes(), //分
+		"s+": this.getSeconds(), //秒
+		"q+": Math.floor((this.getMonth() + 3) / 3), //季度
+		"S": this.getMilliseconds() //毫秒
+	};
+	if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+	for (var k in o)
+		if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+	return fmt;
 }
 
 //私聊 订阅自己 登录时
@@ -422,3 +456,36 @@ function connectUser(username) {
 		console.log(respnose);
 	});
 }
+
+window.onload = function() {
+		var div1 = document.getElementById("div1");
+		var div2 = document.getElementById("div2");
+		div2.onmousedown = function(ev){
+			var oevent = ev || event;
+			var distanceX = oevent.clientX - div1.offsetLeft;　　　　
+			var distanceY = oevent.clientY - div1.offsetTop;
+			document.onmousemove = function(ev) {　　　　　　
+				var oevent = ev || event;　　　　　　
+				div1.style.left = oevent.clientX - distanceX + 'px';　　　　　　
+				div1.style.top = oevent.clientY - distanceY + 'px';　　　　
+			}　　　　
+			document.onmouseup = function() {　　　　　　
+				document.onmousemove = null;　　　　　　
+				document.onmouseup = null;　　　　
+			}
+		}
+//		div1.onmousedown = function(ev) {　　　　
+//			var oevent = ev || event;
+//			var distanceX = oevent.clientX - div1.offsetLeft;　　　　
+//			var distanceY = oevent.clientY - div1.offsetTop;
+//			document.onmousemove = function(ev) {　　　　　　
+//				var oevent = ev || event;　　　　　　
+//				div1.style.left = oevent.clientX - distanceX + 'px';　　　　　　
+//				div1.style.top = oevent.clientY - distanceY + 'px';　　　　
+//			}　　　　
+//			document.onmouseup = function() {　　　　　　
+//				document.onmousemove = null;　　　　　　
+//				document.onmouseup = null;　　　　
+//			}　　
+//		}
+	}
