@@ -10,6 +10,7 @@ $(function() {
 	doPost('version');
 	getimageList();
 	connect();
+	//	bindResize(document.getElementById('div1'));
 	//	doPost("register",{"username":"333","password":"22","mail":"406644209@qq.com"});
 	//	doPost('login',{"username":"111","password":"123"});
 })
@@ -43,7 +44,7 @@ var category = new Vue({
 	el: '#category',
 	data: {
 		chatstyle: 'none',
-//		chatRoom: false,
+		//		chatRoom: false,
 		signin: false,
 		signup: false,
 		room: '',
@@ -117,24 +118,24 @@ var category = new Vue({
 	},
 	methods: {
 		signin_click: function(name) {
-			if(this.$data.signup){
+			if(this.$data.signup) {
 				this.$data.signup = false;
-			}else{
+			} else {
 				this.$refs[name].validate(function(valid) {
 					if(valid) {
-						doPost('login',category.$data.signinForm);
+						doPost('login', category.$data.signinForm);
 						this.$Message.success('Success!');
 					}
-				})				
+				})
 			}
 		},
-		signup_click: function(name){
-			if(!this.$data.signup){
-				this.$data.signup = true;				
-			}else{
+		signup_click: function(name) {
+			if(!this.$data.signup) {
+				this.$data.signup = true;
+			} else {
 				this.$refs[name].validate(function(valid) {
 					if(valid) {
-						doPost('register',category.$data.signupForm);
+						doPost('register', category.$data.signupForm);
 					}
 				})
 			}
@@ -164,15 +165,18 @@ var category = new Vue({
 		menu_show: function() {
 			this.$data.menu = !this.$data.menu;
 		},
-		ok: function(){
-			if(this.chatstyle =='block'){
+		ok: function() {
+			if(this.chatstyle == 'block') {
 				var content = this.$data.chat;
 				var name = this.$data.login_user;
-				stompClient.send("/ws/chat", {}, JSON.stringify({'name': name,'content':content }));
-				this.$data.chat = "";				
+				stompClient.send("/ws/chat", {}, JSON.stringify({
+					'name': name,
+					'content': content
+				}));
+				this.$data.chat = "";
 			}
 		},
-		close: function(){
+		close: function() {
 			this.chatstyle = 'none';
 		},
 		chatroom: function() {
@@ -222,18 +226,18 @@ function versionRequest(request, form) {
 function versionResponse(response) {
 	if(response.code == "200") {
 		var data = response.data;
-		versionData(data,1);
+		versionData(data, 1);
 	} else {
 		console.log("version Response:" + getMessage(response));
 	}
 }
 
-function versionData(data,flag) {
+function versionData(data, flag) {
 	category.dbCount = data.dbCount;
 	category.onlineCount = data.onlineCount;
-	if(flag){
-		category.selfCount = data.selfCount;		
-		if(data.name != "guest"){
+	if(flag) {
+		category.selfCount = data.selfCount;
+		if(data.name != "guest") {
 			category.$Message.success("欢迎回来" + data.name);
 			category.$data.self_count = true;
 			category.$data.login = true;
@@ -379,9 +383,9 @@ function connect() {
 		//通过stompClient.subscribe（）订阅服务器的目标是'/topic/getResponse'发送过来的地址，与@SendTo中的地址对应。
 		stompClient.subscribe('/topic/version', function(respnose) {
 			var da = JSON.parse(respnose.body);
-			if(da.type == "version"){
-				versionData(da.data,0);
-			}else{
+			if(da.type == "version") {
+				versionData(da.data, 0);
+			} else {
 				console.log(da);
 			}
 		});
@@ -391,28 +395,35 @@ function connect() {
 
 //聊天室订阅
 function chatroom() {
-	if(!chatConnect &&category.$data.login){
+	if(!chatConnect && category.$data.login) {
 		stompClient.subscribe('/topic/chatRoom', function(respnose) {
-			if(category.$data.chatstyle =='none'){
+			if(category.$data.chatstyle == 'none') {
 				if(!category.$data.chatCount) {
 					category.$data.chatCount = 1;
 				} else {
 					category.$data.chatCount += 1;
-				}			
+				}
 			}
 			showResponse(JSON.parse(respnose.body));
-		});		
-		chatConnect ++;
+		});
+		chatConnect++;
 	}
 }
 
-function showResponse(res){
-	if(res.type == "chat"){
+function showResponse(res) {
+	if(res.type == "chat") {
 		var name = res.data.name;
 		var cont = res.data.content;
 		var time = getDate(res.data.timestamp);
-		time = timeStamp2String(time,"yyyy-MM-dd hh:mm:ss");
-		category.$data.room += name + "|" + time + "\n" + cont + "\n"; 
+		time = timeStamp2String(time, "yyyy-MM-dd hh:mm:ss");
+		var content = document.getElementById('content');
+		if(name == category.$data.login_user) {
+			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
+//			category.$data.room += '<h4>' + name + '</h4>' + '&nbsp' + time + "\n" + cont + "\n";
+		} else {
+			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
+//			category.$data.room += '<h4>' + name + '</h4>' + '&nbsp' + time + "\n" + cont + "\n";
+		}
 	}
 }
 
@@ -421,12 +432,14 @@ function showResponse(res){
  * @param {Object} strDate
  */
 function getDate(strDate) {
-	if(strDate != null && strDate != undefined && strDate != ""){
+	if(strDate != null && strDate != undefined && strDate != "") {
 		var date = eval('new Date(' + strDate.replace(/\d+(?=-[^-]+$)/,
-	    function (a) { return parseInt(a, 10) - 1; }).match(/\d+/g) + ')');
-	    return date;
+			function(a) {
+				return parseInt(a, 10) - 1;
+			}).match(/\d+/g) + ')');
+		return date;
 	}
-    return "";
+	return "";
 }
 
 /**
@@ -434,15 +447,15 @@ function getDate(strDate) {
  * @param time 输入日期
  * @param formatStr 转换日期的格式 "yyyy-MM-dd hh:mm:ss.S"
  */
-function timeStamp2String(time,formatStr){
-	if(time != null && time != undefined && time != 0){
+function timeStamp2String(time, formatStr) {
+	if(time != null && time != undefined && time != 0) {
 		var datetime = new Date(time);
-	    return datetime.Format(formatStr);
+		return datetime.Format(formatStr);
 	}
 	return "";
 }
 
-Date.prototype.Format = function (fmt) {
+Date.prototype.Format = function(fmt) {
 	var o = {
 		"M+": this.getMonth() + 1, //月份
 		"d+": this.getDate(), //日
@@ -452,9 +465,9 @@ Date.prototype.Format = function (fmt) {
 		"q+": Math.floor((this.getMonth() + 3) / 3), //季度
 		"S": this.getMilliseconds() //毫秒
 	};
-	if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-	for (var k in o)
-		if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+	if(/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+	for(var k in o)
+		if(new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
 	return fmt;
 }
 
@@ -467,19 +480,159 @@ function connectUser(username) {
 }
 
 window.onload = function() {
-		var div2 = document.getElementById("div2");
-		div2.onmousedown = function(ev){
-			var oevent = ev || event;
-			var distanceX = oevent.clientX - div1.offsetLeft;　　　　
-			var distanceY = oevent.clientY - div1.offsetTop;
-			document.onmousemove = function(ev) {　　　　　　
-				var oevent = ev || event;　　　　　　
-				div1.style.left = oevent.clientX - distanceX + 'px';　　　　　　
-				div1.style.top = oevent.clientY - distanceY + 'px';　　　　
-			}　　　　
-			document.onmouseup = function() {　　　　　　
-				document.onmousemove = null;　　　　　　
-				document.onmouseup = null;　　　　
-			}
+	var div2 = document.getElementById("chatroom_header");
+	div2.onmousedown = function(ev) {
+		var oevent = ev || event;
+		var distanceX = oevent.clientX - div1.offsetLeft;　　　　
+		var distanceY = oevent.clientY - div1.offsetTop;
+		document.onmousemove = function(ev) {　　　　　　
+			var oevent = ev || event;　　　　　　
+			div1.style.left = oevent.clientX - distanceX + 'px';　　　　　　
+			div1.style.top = oevent.clientY - distanceY + 'px';　
+			ev.stopPropagation();　　　
+		}　　　　
+		document.onmouseup = function() {
+			document.onmousemove = null;　　　　　　
+			document.onmouseup = null;　　　　
 		}
+		ev.stopPropagation();
 	}
+	var oBox = document.getElementById('div1');
+	var b = ''; //声明两个空变量a，b；  
+	var a = '';
+	oBox.onmouseover = function(ev){
+		var iEvent = ev || event;
+		var dx = iEvent.clientX; //当你第一次单击的时候，存储x轴的坐标。  
+		var dy = iEvent.clientY; //当你第一次单击的时候，储存Y轴的坐标。  
+		var dw = oBox.offsetWidth; //存储默认的div的宽度。  
+		var dh = oBox.offsetHeight; //存储默认的div的高度。  
+		var disright = oBox.offsetLeft + oBox.offsetWidth; //存储默认div右边距离屏幕左边的距离。  
+		var distop = oBox.offsetHeight + oBox.offsetTop; //存储默认div上边距离屏幕左边的距离。  
+		if(iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX) { //右
+			console.log(iEvent.clientX + "|" + (disright - 20));
+			this.style.cursor = "w-resize";
+		}else if((iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX && iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20)||(iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY && iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX)){
+			this.style.cursor = "se-resize";
+		}else if(iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX) { //左
+			this.style.cursor = "w-resize";
+		}else if(iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20) {//上
+			this.style.cursor = "s-resize";
+		}else if(iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY) {//下
+			this.style.cursor = "s-resize";
+		}else if((iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX && iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20)||(iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX && iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY)){
+			this.style.cursor = "ne-resize";
+		}else{
+			this.style.cursor = "default";
+		}
+		
+	}
+	oBox.onmousedown = function(ev) {
+		var iEvent = ev || event;
+		var dx = iEvent.clientX; //当你第一次单击的时候，存储x轴的坐标。  
+		var dy = iEvent.clientY; //当你第一次单击的时候，储存Y轴的坐标。  
+		var dw = oBox.offsetWidth; //存储默认的div的宽度。  
+		var dh = oBox.offsetHeight; //存储默认的div的高度。  
+		var disright = oBox.offsetLeft + oBox.offsetWidth; //存储默认div右边距离屏幕左边的距离。  
+		var distop = oBox.offsetHeight + oBox.offsetTop; //存储默认div上边距离屏幕左边的距离。  
+		if(iEvent.clientX > disright - 10 && disright + 10 >iEvent.clientX) { //判断鼠标是否点在右边还是左边
+			b = 'right';
+		}else if(iEvent.clientX < oBox.offsetLeft + 10 && oBox.offsetLeft - 10 < iEvent.clientX) { //同理  
+			b = 'left';
+		}else{
+			b = '';
+		}
+		if(iEvent.clientY < oBox.offsetTop + 10 && iEvent.clientY > oBox.offsetTop - 10) {
+			a = 'top';
+		}else if(iEvent.clientY > distop - 10 && distop +10 > iEvent.clientY) {
+			a = 'bottom';
+		}else{
+			a = '';
+		}
+		document.onmousemove = function(ev) {
+			var iEvent = ev || event;
+			if(b == 'right') {
+				oBox.style.width = dw + (iEvent.clientX - dx) + 'px';
+				//此时的iEvent.clientX的为你拖动时一直改变的鼠标的X坐标  
+				if(oBox.offsetWidth <= 10) { //当盒子缩小到一定范围内的时候，让他保持一个固定值，不再继续改变  
+					oBox.style.width = '10px';
+				}
+			}
+			if(b == 'left') {
+				oBox.style.width = dw - (iEvent.clientX - dx) + 'px'; //iEvent.clientX-dx表示第二次鼠标的X坐标减去第一次鼠标的X坐标，得到绿色移动的距离（为负数），再加上原本的div宽度，就得到新的宽度。 图3  
+				oBox.style.left = disright - oBox.offsetWidth + 'px'; //disright表示盒子右边框距离左边的距离，disright-当前的盒子宽度，就是当前盒子距离左边的距离  
+				if(oBox.offsetWidth <= 10) {
+					oBox.style.width = '10px';
+					oBox.style.left = disright - oBox.offsetWidth + 'px'; //防止抖动  
+				}
+			}
+			if(a == 'bottom') {
+				oBox.style.height = iEvent.clientY - dy + dh + 'px';
+				if(oBox.offsetHeight <= 10) {
+					oBox.style.height = '10px';
+				}
+			}
+			if(a == 'top') {
+				oBox.style.height = dh - (iEvent.clientY - dy) + 'px'
+				oBox.style.top = distop - oBox.offsetHeight + 'px';
+				if(oBox.offsetHeight <= 10) {
+					oBox.style.height = '10px';
+					oBox.style.top = distop - oBox.offsetHeight + 'px';
+				}
+			}
+			ev.stopPropagation();
+		}
+		document.onmouseup = function() {
+			document.onmousedown = null;
+			document.onmousemove = null;
+		};
+		return false;
+		ev.stopPropagation();
+	}
+
+}
+
+//function bindResize(el) {
+////初始化参数   
+//var els = el.style,
+//  //鼠标的 X 和 Y 轴坐标   
+//  x = y = 0;
+////邪恶的食指   
+//$(el).mousedown(function (e) {
+//  //按下元素后，计算当前鼠标与对象计算后的坐标  
+//  x = e.clientX - el.offsetWidth, y = e.clientY - el.offsetHeight;
+//  //在支持 setCapture 做些东东  
+//  el.setCapture ? (
+//    //捕捉焦点   
+//    el.setCapture(),
+//    //设置事件   
+//    el.onmousemove = function (ev) {
+//      mouseMove(ev || event)
+//    },
+//    el.onmouseup = mouseUp
+//  ) : (
+//    //绑定事件   
+//    $(document).bind("mousemove", mouseMove).bind("mouseup", mouseUp)
+//  )
+//  //防止默认事件发生   
+//  e.preventDefault()
+//});
+////移动事件   
+//function mouseMove(e) {
+//  //宇宙超级无敌运算中... 
+//  els.width = e.clientX - x + 'px', //改变宽度
+//    els.height = e.clientY - y + 'px' //改变高度 
+//}
+////停止事件   
+//function mouseUp() {
+//  //在支持 releaseCapture 做些东东   
+//  el.releaseCapture ? (
+//    //释放焦点   
+//    el.releaseCapture(),
+//    //移除事件   
+//    el.onmousemove = el.onmouseup = null
+//  ) : (
+//    //卸载事件   
+//    $(document).unbind("mousemove", mouseMove).unbind("mouseup", mouseUp)
+//  )
+//}
+//}

@@ -12,18 +12,51 @@
 
 	<body>
 		<section id="category" class="full">
-			<div id="div1" :style="{'display': chatstyle}">
-				<div id="div2" style="width: 100%;height: 30px;border-radius: 1em 1em 0 0 / 3em;background-color: rgb(111,185,230);">
-					chatroom
+			<!--<div id="div1" :style="{'display': chatstyle}">
+				<div id="chatroom_header">
+					<h3>chatroom</h3>
 				</div>
-				<div style="width: 100%;background-color: rgb(195,221,236);">
+				<div style="width: 100%;height: 100%;background-color: rgb(195,221,236);">
+					<div id="chatroom_content"></div>
 		            <i-input type="textarea" v-model="room" :autosize="{minRows: 5,maxRows: 5}" readonly></i-input>
 		            <i-input type="textarea" v-model="chat" :autosize="{minRows: 5,maxRows: 5}" placeholder="please input something..."></i-input>
 				</div>
-					<div style="background-color: rgb(195,221,236);width: 100%;padding: 2px;">
+					<div class="chatroom_footer">
 						<i-button style="margin: 0 15px;" type="primary" @click="close">close</i-button>
 						<i-button style="margin: 0 15px;" type="primary" @click="ok">send</i-button>
 					</div>
+			</div>-->
+			<div id="drag">
+				<div class="title">
+					<h2>ChatRoom</h2>
+					<div>
+						<a class="min" href="javascript:;" title="最小化"></a>
+						<a class="max" href="javascript:;" title="最大化"></a>
+						<a class="revert" href="javascript:;" title="还原"></a>
+						<a class="close" href="javascript:;" title="关闭"></a>
+					</div>
+				</div>
+				<div class="resizeL"></div>
+				<div class="resizeT"></div>
+				<div class="resizeR"></div>
+				<div class="resizeB"></div>
+				<div class="resizeLT"></div>
+				<div class="resizeTR"></div>
+				<div class="resizeBR"></div>
+				<div class="resizeLB"></div>
+				<div id="content" class="content">{{room}}
+					① 窗口可以拖动；<br /> 
+					② 窗口可以通过八个方向改变大小；<br /> 
+					③ 窗口可以最小化、最大化、还原、关闭；<br /> 
+					④ 限制窗口最小宽度/高度。
+				</div>
+				<div style="margin-bottom: 0px; overflow: auto;background-color: #FFFFFF;">
+					<i-input type="textarea" v-model="chat" :autosize="{minRows: 1,maxRows: 5}" placeholder="please input something..."></i-input>
+				</div>
+				<div style="position: relative;bottom: 0;">
+					<i-button style="margin: 0 15px;" type="primary" @click="close">close</i-button>
+					<i-button style="margin: 0 15px;" type="primary" @click="ok">send</i-button>
+				</div>
 			</div>
 			<template v-if="!detile">
 				<div id="banner_full">
@@ -31,7 +64,7 @@
 						<h1 class="banner_title">welcome to maldives holiday</h1>
 						<h3 class="banner_image_subtitle">現在の人数: {{onlineCount}}</h3>
 						<h3 class="banner_image_subtitle">累計人数: {{dbCount}}</h3>
-						<template v-if="self_count">							
+						<template v-if="self_count">
 							<h3 class="banner_image_subtitle">自分タイムズ: {{selfCount}}</h3>
 						</template>
 					</div>
@@ -70,51 +103,51 @@
 			<Modal v-model="signin" title="sign in and sign up" width="300">
 				<template v-if="!signup">
 					<div>
-					<i-form ref="signinForm" :model="signinForm" :rules="ruleInline">
-				        <Form-Item prop="username">
-				            <i-input type="text" v-model="signinForm.username" placeholder="Username or mail">
-				                <Icon type="ios-person-outline" slot="prepend"></Icon>
-				            </i-input>
-				        </Form-Item>
-				        <Form-Item prop="password">
-				            <i-input type="password" v-model="signinForm.password" placeholder="Password">
-				                <Icon type="ios-locked-outline" slot="prepend"></Icon>
-				            </i-input>
-				        </Form-Item>
-				    </i-form>
-				    </div>
+						<i-form ref="signinForm" :model="signinForm" :rules="ruleInline">
+							<Form-Item prop="username">
+								<i-input type="text" v-model="signinForm.username" placeholder="Username or mail">
+									<Icon type="ios-person-outline" slot="prepend"></Icon>
+								</i-input>
+							</Form-Item>
+							<Form-Item prop="password">
+								<i-input type="password" v-model="signinForm.password" placeholder="Password">
+									<Icon type="ios-locked-outline" slot="prepend"></Icon>
+								</i-input>
+							</Form-Item>
+						</i-form>
+					</div>
 				</template>
 				<template v-else>
 					<div>
-					<i-form ref="signupForm" :model="signupForm" :rules="ruleInSignup">
-				        <Form-Item prop="signusername">
-				            <i-input type="text" v-model="signupForm.signusername" placeholder="Username">
-				                <Icon type="ios-person-outline" slot="prepend"></Icon>
-				            </i-input>
-				        </Form-Item>
-				        <Form-Item prop="signpassword">
-				            <i-input type="password" v-model="signupForm.signpassword" placeholder="Password">
-				                <Icon type="ios-locked-outline" slot="prepend"></Icon>
-				            </i-input>
-				        </Form-Item>
-				        <Form-Item prop="mail">
-				            <i-input type="text" v-model="signupForm.mail" placeholder="mail">
-				                <Icon type="ios-email-outline" slot="prepend"></Icon>
-				            </i-input>
-				        </Form-Item>
-				    </i-form>
-				    </div>
+						<i-form ref="signupForm" :model="signupForm" :rules="ruleInSignup">
+							<Form-Item prop="signusername">
+								<i-input type="text" v-model="signupForm.signusername" placeholder="Username">
+									<Icon type="ios-person-outline" slot="prepend"></Icon>
+								</i-input>
+							</Form-Item>
+							<Form-Item prop="signpassword">
+								<i-input type="password" v-model="signupForm.signpassword" placeholder="Password">
+									<Icon type="ios-locked-outline" slot="prepend"></Icon>
+								</i-input>
+							</Form-Item>
+							<Form-Item prop="mail">
+								<i-input type="text" v-model="signupForm.mail" placeholder="mail">
+									<Icon type="ios-email-outline" slot="prepend"></Icon>
+								</i-input>
+							</Form-Item>
+						</i-form>
+					</div>
 				</template>
-			    <div slot="footer">
-			    	<!--<div style="width: 120px;">-->
-		            	<i-button size="large" type="primary" @click="signin_click('signinForm')">Signin</i-button>
-		            <!--</div>-->
-		            <!--<div style="width: 120px;">-->
-		            	<i-button size="large" type="primary" @click="signup_click('signupForm')">Signup</i-button>
-		            <!--</div>-->
-		        </div>
-		    </Modal>
-		    <!--<Modal v-model="chatRoom" title="chatRoom">
+				<div slot="footer">
+					<!--<div style="width: 120px;">-->
+					<i-button size="large" type="primary" @click="signin_click('signinForm')">Signin</i-button>
+					<!--</div>-->
+					<!--<div style="width: 120px;">-->
+					<i-button size="large" type="primary" @click="signup_click('signupForm')">Signup</i-button>
+					<!--</div>-->
+				</div>
+			</Modal>
+			<!--<Modal v-model="chatRoom" title="chatRoom">
 				<div>
 					<i-form ref="chatRoomForm" :model="chatRoomForm">
 				        <Form-Item prop="room">
@@ -129,7 +162,7 @@
 			    	<i-button size="large" type="primary" @click="ok">send</i-button>
 			    </div>
 			</Modal>-->
-			
+
 			<template v-if="!detile">
 				<div id="image_container" :style="{marginLeft: totalLeft,'width': totalWidth}">
 					<section class="image_list_container">
@@ -193,32 +226,32 @@
 					<!--<DrawMenu />-->
 				</div>
 			</template>
-				<div style="position: absolute;right: 15px;cursor: pointer;" @click="chatroom">
-					<Affix :offset-bottom="60">
-						 <Badge :count="chatCount">
-							<svg fill="#000000" height="35" viewBox="0 0 24 24" width="35" xmlns="http://www.w3.org/2000/svg">
-							    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/>
-							    <path d="M0 0h24v24H0z" fill="none"/>
-							</svg>
-						</Badge>
-					</Affix>
-				</div>
-				<div style="position: absolute;right: 15px;cursor: pointer;" @click="menu_show">
-					<Affix :offset-bottom="10">
-						<template v-if="menu">
-							<svg fill="#000000" height="35" viewBox="0 0 24 24" width="35" xmlns="http://www.w3.org/2000/svg">
-							    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
-							    <path d="M0 0h24v24H0z" fill="none"/>
-							</svg>
-						</template>
-						<template v-else>						
-							<svg fill="#000000" height="35" viewBox="0 0 24 24" width="35" xmlns="http://www.w3.org/2000/svg">
-							    <path d="M0 0h24v24H0z" fill="none"/>
-							    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-							</svg>
-						</template>
-					</Affix>
-				</div>
+			<div style="position: absolute;right: 15px;cursor: pointer;" @click="chatroom">
+				<Affix :offset-bottom="60">
+					<Badge :count="chatCount">
+						<svg fill="#000000" height="35" viewBox="0 0 24 24" width="35" xmlns="http://www.w3.org/2000/svg">
+							<path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z" />
+							<path d="M0 0h24v24H0z" fill="none" />
+						</svg>
+					</Badge>
+				</Affix>
+			</div>
+			<div style="position: absolute;right: 15px;cursor: pointer;" @click="menu_show">
+				<Affix :offset-bottom="10">
+					<template v-if="menu">
+						<svg fill="#000000" height="35" viewBox="0 0 24 24" width="35" xmlns="http://www.w3.org/2000/svg">
+							<path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
+							<path d="M0 0h24v24H0z" fill="none" />
+						</svg>
+					</template>
+					<template v-else>
+						<svg fill="#000000" height="35" viewBox="0 0 24 24" width="35" xmlns="http://www.w3.org/2000/svg">
+							<path d="M0 0h24v24H0z" fill="none" />
+							<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+						</svg>
+					</template>
+				</Affix>
+			</div>
 			<template v-if="detile">
 				<div id="image_detile">
 					<section class="imgs">
@@ -247,9 +280,10 @@
 	<script type="text/javascript" src="js/iview.min.js"></script>
 	<!--<script type="text/javascript" src="http://unpkg.com/iview/dist/iview.min.js"></script>-->
 	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-	<script type="text/javascript" src="js/stomp.min.js" ></script>
-	<script type="text/javascript" src="js/js.cookie.min.js" ></script>
+	<script type="text/javascript" src="js/stomp.min.js"></script>
+	<script type="text/javascript" src="js/js.cookie.min.js"></script>
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript" src="js/category.js"></script>
+	<script type="text/javascript" src="js/chatroom.js" ></script>
 
 </html>
