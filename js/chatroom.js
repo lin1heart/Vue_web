@@ -13,12 +13,16 @@ var get = {
 		return(obj || document).getElementsByTagName(elem)
 	}
 };
-var dragMinWidth = 250;
-var dragMinHeight = 124;
+if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
+	var phoneDrag = document.getElementById('drag');
+	phoneDrag.style.left = '10%';
+}
+var dragMinWidth = 300;
+var dragMinHeight = 400;
 /*-------------------------- +
   拖拽函数
  +-------------------------- */
-function drag(oDrag, handle) {
+function drag(oDrag,cDrag, handle) {
 	var disX = dixY = 0;
 	var oMin = get.byClass("min", oDrag)[0];
 	var oMax = get.byClass("max", oDrag)[0];
@@ -26,12 +30,12 @@ function drag(oDrag, handle) {
 	var oClose = get.byClass("close", oDrag)[0];
 	handle = handle || oDrag;
 	handle.style.cursor = "move";
-	handle.onmousedown = function(event) {
+	handle.onmousedown = handle.ontouchstart = function(event) {
 		var event = event || window.event;
 		disX = event.clientX - oDrag.offsetLeft;
 		disY = event.clientY - oDrag.offsetTop;
 
-		document.onmousemove = function(event) {
+		document.onmousemove = document.ontouchmove = function(event) {
 			var event = event || window.event;
 			var iL = event.clientX - disX;
 			var iT = event.clientY - disY;
@@ -49,9 +53,9 @@ function drag(oDrag, handle) {
 			return false
 		};
 
-		document.onmouseup = function() {
-			document.onmousemove = null;
-			document.onmouseup = null;
+		document.onmouseup = document.ontouchend = function() {
+			document.onmousemove = document.ontouchmove = null;
+			document.onmouseup = document.ontouchend = null;
 			this.releaseCapture && this.releaseCapture()
 		};
 		this.setCapture && this.setCapture();
@@ -60,8 +64,11 @@ function drag(oDrag, handle) {
 	//最大化按钮
 	oMax.onclick = function() {
 		oDrag.style.top = oDrag.style.left = 0;
+		cDrag.style.top = cDrag
 		oDrag.style.width = document.documentElement.clientWidth - 2 + "px";
 		oDrag.style.height = document.documentElement.clientHeight - 2 + "px";
+		cDrag.style.width = document.documentElement.clientWidth - 12 + "px";
+		cDrag.style.height = document.documentElement.clientHeight -159 + "px";
 		this.style.display = "none";
 		oRevert.style.display = "block";
 	};
@@ -71,11 +78,13 @@ function drag(oDrag, handle) {
 		oDrag.style.height = dragMinHeight + "px";
 		oDrag.style.left = (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
 		oDrag.style.top = (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+		cDrag.style.width = dragMinWidth - 12 + "px";
+		cDrag.style.height = dragMinHeight -157 + "px";
 		this.style.display = "none";
 		oMax.style.display = "block";
 	};
 	//最小化按钮
-	oMin.onclick = oClose.onclick = function() {
+	oMin.onclick = function() {
 		oDrag.style.display = "none";
 		var oA = document.createElement("a");
 		oA.className = "open";
@@ -88,8 +97,12 @@ function drag(oDrag, handle) {
 			this.onclick = null;
 		};
 	};
+	//关闭按钮
+	oClose.onclick = function(){
+		oDrag.style.display = "none";
+	};
 	//阻止冒泡
-	oMin.onmousedown = oMax.onmousedown = oClose.onmousedown = function(event) {
+	oMin.onmousedown =oMin.ontouchstart = oMax.onmousedown = oMax.ontouchstart = oClose.onmousedown = oClose.ontouchstart = function(event) {
 		this.onfocus = function() {
 			this.blur()
 		};
@@ -100,7 +113,7 @@ function drag(oDrag, handle) {
   改变大小函数
  +-------------------------- */
 function resize(oParent, handle, isLeft, isTop, lockX, lockY) {
-	handle.onmousedown = function(event) {
+	handle.onmousedown = handle.ontouchstart = function(event) {
 		var event = event || window.event;
 		var disX = event.clientX - handle.offsetLeft;
 		var disY = event.clientY - handle.offsetTop;
@@ -108,8 +121,11 @@ function resize(oParent, handle, isLeft, isTop, lockX, lockY) {
 		var iParentLeft = oParent.offsetLeft;
 		var iParentWidth = oParent.offsetWidth;
 		var iParentHeight = oParent.offsetHeight;
+		var cDrag = document.getElementById("drag_content");
+		var cDragTop = cDrag.offsetTop;
+		var cDragLeft = cDrag.offsetLeft;
 
-		document.onmousemove = function(event) {
+		document.onmousemove = document.ontouchmove = function(event) {
 			var event = event || window.event;
 
 			var iL = event.clientX - disX;
@@ -119,30 +135,31 @@ function resize(oParent, handle, isLeft, isTop, lockX, lockY) {
 			var iW = isLeft ? iParentWidth - iL : handle.offsetWidth + iL;
 			var iH = isTop ? iParentHeight - iT : handle.offsetHeight + iT;
 
-			isLeft && (oParent.style.left = iParentLeft + iL + "px");
-			isTop && (oParent.style.top = iParentTop + iT + "px");
+			isLeft && (oParent.style.left = iParentLeft + iL + "px") &&(cDrag.style.left = cDragLeft +iT + "px");
+			isTop && (oParent.style.top = iParentTop + iT + "px") &&(cDrag.style.top = cDragTop +iT + "px");
 
 			iW < dragMinWidth && (iW = dragMinWidth);
 			iW > maxW && (iW = maxW);
-			lockX || (oParent.style.width = iW + "px");
+			lockX || ((oParent.style.width = iW + "px") &&(cDrag.style.width = iW -20 + "px"));
 
 			iH < dragMinHeight && (iH = dragMinHeight);
 			iH > maxH && (iH = maxH);
-			lockY || (oParent.style.height = iH + "px");
+			lockY || ((oParent.style.height = iH + "px") &&(cDrag.style.height = iH -157 + "px"));
 
-			if((isLeft && iW == dragMinWidth) || (isTop && iH == dragMinHeight)) document.onmousemove = null;
+			if((isLeft && iW == dragMinWidth) || (isTop && iH == dragMinHeight)) document.onmousemove = document.ontouchmove = null;
 
 			return false;
 		};
-		document.onmouseup = function() {
-			document.onmousemove = null;
-			document.onmouseup = null;
+		document.onmouseup = document.ontouchend = function() {
+			document.onmousemove = document.ontouchmove = null;
+			document.onmouseup = document.ontouchend = null;
 		};
 		return false;
 	}
 };
 window.onload = window.onresize = function() {
 	var oDrag = document.getElementById("drag");
+	var cDrag = document.getElementById("drag_content");
 	var oTitle = get.byClass("title", oDrag)[0];
 	var oL = get.byClass("resizeL", oDrag)[0];
 	var oT = get.byClass("resizeT", oDrag)[0];
@@ -153,7 +170,7 @@ window.onload = window.onresize = function() {
 	var oBR = get.byClass("resizeBR", oDrag)[0];
 	var oLB = get.byClass("resizeLB", oDrag)[0];
 
-	drag(oDrag, oTitle);
+	drag(oDrag,cDrag, oTitle);
 	//四角
 	resize(oDrag, oLT, true, true, false, false);
 	resize(oDrag, oTR, false, true, false, false);
@@ -165,6 +182,6 @@ window.onload = window.onresize = function() {
 	resize(oDrag, oR, false, false, false, true);
 	resize(oDrag, oB, false, false, true, false);
 
-	oDrag.style.left = (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
-	oDrag.style.top = (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+//	oDrag.style.left = (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
+//	oDrag.style.top = (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
 }

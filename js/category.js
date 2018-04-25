@@ -45,9 +45,10 @@ var category = new Vue({
 	data: {
 		chatstyle: 'none',
 		//		chatRoom: false,
+		chatContent:[],
 		signin: false,
 		signup: false,
-		room: '',
+//		room: '',
 		chat: '',
 		signinForm: {
 			username: '',
@@ -167,23 +168,29 @@ var category = new Vue({
 		},
 		ok: function() {
 			if(this.chatstyle == 'block') {
-				var content = this.$data.chat;
-				var name = this.$data.login_user;
-				stompClient.send("/ws/chat", {}, JSON.stringify({
-					'name': name,
-					'content': content
-				}));
-				this.$data.chat = "";
+				if(this.$data.chat){
+					var content = this.$data.chat;
+					var name = this.$data.login_user;
+					stompClient.send("/ws/chat", {}, JSON.stringify({
+						'name': name,
+						'content': content
+					}));
+					this.$data.chat = "";					
+				}else{
+					this.$Message.warning("can not send empty");
+				}
 			}
 		},
-		close: function() {
-			this.chatstyle = 'none';
-		},
+//		close: function() {
+//			this.chatstyle = 'none';
+//		},
 		chatroom: function() {
 			if(this.$data.login) {
 				chatroom();
-				this.chatstyle = 'block';
-				this.chatCount = "";
+				var as = document.getElementById('drag');
+				as.style.display = "block";
+				this.$data.chatstyle = 'block';
+				this.$data.chatCount = "";
 			} else {
 				this.$Message.warning('pleaase login');
 			}
@@ -418,10 +425,18 @@ function showResponse(res) {
 		time = timeStamp2String(time, "yyyy-MM-dd hh:mm:ss");
 		var content = document.getElementById('content');
 		if(name == category.$data.login_user) {
-			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
+			category.$data.chatContent.push({
+				showli: 'myself',
+				content: cont
+			})
+//			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
 //			category.$data.room += '<h4>' + name + '</h4>' + '&nbsp' + time + "\n" + cont + "\n";
 		} else {
-			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
+			category.$data.chatContent.push({
+				content: cont,
+				showli: 'others'
+			})
+//			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
 //			category.$data.room += '<h4>' + name + '</h4>' + '&nbsp' + time + "\n" + cont + "\n";
 		}
 	}
@@ -479,117 +494,117 @@ function connectUser(username) {
 	});
 }
 
-window.onload = function() {
-	var div2 = document.getElementById("chatroom_header");
-	div2.onmousedown = function(ev) {
-		var oevent = ev || event;
-		var distanceX = oevent.clientX - div1.offsetLeft;　　　　
-		var distanceY = oevent.clientY - div1.offsetTop;
-		document.onmousemove = function(ev) {　　　　　　
-			var oevent = ev || event;　　　　　　
-			div1.style.left = oevent.clientX - distanceX + 'px';　　　　　　
-			div1.style.top = oevent.clientY - distanceY + 'px';　
-			ev.stopPropagation();　　　
-		}　　　　
-		document.onmouseup = function() {
-			document.onmousemove = null;　　　　　　
-			document.onmouseup = null;　　　　
-		}
-		ev.stopPropagation();
-	}
-	var oBox = document.getElementById('div1');
-	var b = ''; //声明两个空变量a，b；  
-	var a = '';
-	oBox.onmouseover = function(ev){
-		var iEvent = ev || event;
-		var dx = iEvent.clientX; //当你第一次单击的时候，存储x轴的坐标。  
-		var dy = iEvent.clientY; //当你第一次单击的时候，储存Y轴的坐标。  
-		var dw = oBox.offsetWidth; //存储默认的div的宽度。  
-		var dh = oBox.offsetHeight; //存储默认的div的高度。  
-		var disright = oBox.offsetLeft + oBox.offsetWidth; //存储默认div右边距离屏幕左边的距离。  
-		var distop = oBox.offsetHeight + oBox.offsetTop; //存储默认div上边距离屏幕左边的距离。  
-		if(iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX) { //右
-			console.log(iEvent.clientX + "|" + (disright - 20));
-			this.style.cursor = "w-resize";
-		}else if((iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX && iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20)||(iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY && iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX)){
-			this.style.cursor = "se-resize";
-		}else if(iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX) { //左
-			this.style.cursor = "w-resize";
-		}else if(iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20) {//上
-			this.style.cursor = "s-resize";
-		}else if(iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY) {//下
-			this.style.cursor = "s-resize";
-		}else if((iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX && iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20)||(iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX && iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY)){
-			this.style.cursor = "ne-resize";
-		}else{
-			this.style.cursor = "default";
-		}
-		
-	}
-	oBox.onmousedown = function(ev) {
-		var iEvent = ev || event;
-		var dx = iEvent.clientX; //当你第一次单击的时候，存储x轴的坐标。  
-		var dy = iEvent.clientY; //当你第一次单击的时候，储存Y轴的坐标。  
-		var dw = oBox.offsetWidth; //存储默认的div的宽度。  
-		var dh = oBox.offsetHeight; //存储默认的div的高度。  
-		var disright = oBox.offsetLeft + oBox.offsetWidth; //存储默认div右边距离屏幕左边的距离。  
-		var distop = oBox.offsetHeight + oBox.offsetTop; //存储默认div上边距离屏幕左边的距离。  
-		if(iEvent.clientX > disright - 10 && disright + 10 >iEvent.clientX) { //判断鼠标是否点在右边还是左边
-			b = 'right';
-		}else if(iEvent.clientX < oBox.offsetLeft + 10 && oBox.offsetLeft - 10 < iEvent.clientX) { //同理  
-			b = 'left';
-		}else{
-			b = '';
-		}
-		if(iEvent.clientY < oBox.offsetTop + 10 && iEvent.clientY > oBox.offsetTop - 10) {
-			a = 'top';
-		}else if(iEvent.clientY > distop - 10 && distop +10 > iEvent.clientY) {
-			a = 'bottom';
-		}else{
-			a = '';
-		}
-		document.onmousemove = function(ev) {
-			var iEvent = ev || event;
-			if(b == 'right') {
-				oBox.style.width = dw + (iEvent.clientX - dx) + 'px';
-				//此时的iEvent.clientX的为你拖动时一直改变的鼠标的X坐标  
-				if(oBox.offsetWidth <= 10) { //当盒子缩小到一定范围内的时候，让他保持一个固定值，不再继续改变  
-					oBox.style.width = '10px';
-				}
-			}
-			if(b == 'left') {
-				oBox.style.width = dw - (iEvent.clientX - dx) + 'px'; //iEvent.clientX-dx表示第二次鼠标的X坐标减去第一次鼠标的X坐标，得到绿色移动的距离（为负数），再加上原本的div宽度，就得到新的宽度。 图3  
-				oBox.style.left = disright - oBox.offsetWidth + 'px'; //disright表示盒子右边框距离左边的距离，disright-当前的盒子宽度，就是当前盒子距离左边的距离  
-				if(oBox.offsetWidth <= 10) {
-					oBox.style.width = '10px';
-					oBox.style.left = disright - oBox.offsetWidth + 'px'; //防止抖动  
-				}
-			}
-			if(a == 'bottom') {
-				oBox.style.height = iEvent.clientY - dy + dh + 'px';
-				if(oBox.offsetHeight <= 10) {
-					oBox.style.height = '10px';
-				}
-			}
-			if(a == 'top') {
-				oBox.style.height = dh - (iEvent.clientY - dy) + 'px'
-				oBox.style.top = distop - oBox.offsetHeight + 'px';
-				if(oBox.offsetHeight <= 10) {
-					oBox.style.height = '10px';
-					oBox.style.top = distop - oBox.offsetHeight + 'px';
-				}
-			}
-			ev.stopPropagation();
-		}
-		document.onmouseup = function() {
-			document.onmousedown = null;
-			document.onmousemove = null;
-		};
-		return false;
-		ev.stopPropagation();
-	}
-
-}
+//window.onload = function() {
+//	var div2 = document.getElementById("chatroom_header");
+//	div2.onmousedown = function(ev) {
+//		var oevent = ev || event;
+//		var distanceX = oevent.clientX - div1.offsetLeft;　　　　
+//		var distanceY = oevent.clientY - div1.offsetTop;
+//		document.onmousemove = function(ev) {　　　　　　
+//			var oevent = ev || event;　　　　　　
+//			div1.style.left = oevent.clientX - distanceX + 'px';　　　　　　
+//			div1.style.top = oevent.clientY - distanceY + 'px';　
+//			ev.stopPropagation();　　　
+//		}　　　　
+//		document.onmouseup = function() {
+//			document.onmousemove = null;　　　　　　
+//			document.onmouseup = null;　　　　
+//		}
+//		ev.stopPropagation();
+//	}
+//	var oBox = document.getElementById('div1');
+//	var b = ''; //声明两个空变量a，b；  
+//	var a = '';
+//	oBox.onmouseover = function(ev){
+//		var iEvent = ev || event;
+//		var dx = iEvent.clientX; //当你第一次单击的时候，存储x轴的坐标。  
+//		var dy = iEvent.clientY; //当你第一次单击的时候，储存Y轴的坐标。  
+//		var dw = oBox.offsetWidth; //存储默认的div的宽度。  
+//		var dh = oBox.offsetHeight; //存储默认的div的高度。  
+//		var disright = oBox.offsetLeft + oBox.offsetWidth; //存储默认div右边距离屏幕左边的距离。  
+//		var distop = oBox.offsetHeight + oBox.offsetTop; //存储默认div上边距离屏幕左边的距离。  
+//		if(iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX) { //右
+//			console.log(iEvent.clientX + "|" + (disright - 20));
+//			this.style.cursor = "w-resize";
+//		}else if((iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX && iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20)||(iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY && iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX)){
+//			this.style.cursor = "se-resize";
+//		}else if(iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX) { //左
+//			this.style.cursor = "w-resize";
+//		}else if(iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20) {//上
+//			this.style.cursor = "s-resize";
+//		}else if(iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY) {//下
+//			this.style.cursor = "s-resize";
+//		}else if((iEvent.clientX > disright - 20 && disright + 20 >iEvent.clientX && iEvent.clientY < oBox.offsetTop + 20 && iEvent.clientY > oBox.offsetTop - 20)||(iEvent.clientX < oBox.offsetLeft + 20 && oBox.offsetLeft - 20 < iEvent.clientX && iEvent.clientY > distop - 20 && distop +20 > iEvent.clientY)){
+//			this.style.cursor = "ne-resize";
+//		}else{
+//			this.style.cursor = "default";
+//		}
+//		
+//	}
+//	oBox.onmousedown = function(ev) {
+//		var iEvent = ev || event;
+//		var dx = iEvent.clientX; //当你第一次单击的时候，存储x轴的坐标。  
+//		var dy = iEvent.clientY; //当你第一次单击的时候，储存Y轴的坐标。  
+//		var dw = oBox.offsetWidth; //存储默认的div的宽度。  
+//		var dh = oBox.offsetHeight; //存储默认的div的高度。  
+//		var disright = oBox.offsetLeft + oBox.offsetWidth; //存储默认div右边距离屏幕左边的距离。  
+//		var distop = oBox.offsetHeight + oBox.offsetTop; //存储默认div上边距离屏幕左边的距离。  
+//		if(iEvent.clientX > disright - 10 && disright + 10 >iEvent.clientX) { //判断鼠标是否点在右边还是左边
+//			b = 'right';
+//		}else if(iEvent.clientX < oBox.offsetLeft + 10 && oBox.offsetLeft - 10 < iEvent.clientX) { //同理  
+//			b = 'left';
+//		}else{
+//			b = '';
+//		}
+//		if(iEvent.clientY < oBox.offsetTop + 10 && iEvent.clientY > oBox.offsetTop - 10) {
+//			a = 'top';
+//		}else if(iEvent.clientY > distop - 10 && distop +10 > iEvent.clientY) {
+//			a = 'bottom';
+//		}else{
+//			a = '';
+//		}
+//		document.onmousemove = function(ev) {
+//			var iEvent = ev || event;
+//			if(b == 'right') {
+//				oBox.style.width = dw + (iEvent.clientX - dx) + 'px';
+//				//此时的iEvent.clientX的为你拖动时一直改变的鼠标的X坐标  
+//				if(oBox.offsetWidth <= 10) { //当盒子缩小到一定范围内的时候，让他保持一个固定值，不再继续改变  
+//					oBox.style.width = '10px';
+//				}
+//			}
+//			if(b == 'left') {
+//				oBox.style.width = dw - (iEvent.clientX - dx) + 'px'; //iEvent.clientX-dx表示第二次鼠标的X坐标减去第一次鼠标的X坐标，得到绿色移动的距离（为负数），再加上原本的div宽度，就得到新的宽度。 图3  
+//				oBox.style.left = disright - oBox.offsetWidth + 'px'; //disright表示盒子右边框距离左边的距离，disright-当前的盒子宽度，就是当前盒子距离左边的距离  
+//				if(oBox.offsetWidth <= 10) {
+//					oBox.style.width = '10px';
+//					oBox.style.left = disright - oBox.offsetWidth + 'px'; //防止抖动  
+//				}
+//			}
+//			if(a == 'bottom') {
+//				oBox.style.height = iEvent.clientY - dy + dh + 'px';
+//				if(oBox.offsetHeight <= 10) {
+//					oBox.style.height = '10px';
+//				}
+//			}
+//			if(a == 'top') {
+//				oBox.style.height = dh - (iEvent.clientY - dy) + 'px'
+//				oBox.style.top = distop - oBox.offsetHeight + 'px';
+//				if(oBox.offsetHeight <= 10) {
+//					oBox.style.height = '10px';
+//					oBox.style.top = distop - oBox.offsetHeight + 'px';
+//				}
+//			}
+//			ev.stopPropagation();
+//		}
+//		document.onmouseup = function() {
+//			document.onmousedown = null;
+//			document.onmousemove = null;
+//		};
+//		return false;
+//		ev.stopPropagation();
+//	}
+//
+//}
 
 //function bindResize(el) {
 ////初始化参数   
