@@ -36,7 +36,7 @@
 					<textarea v-model="chat" @keydown="sendMess($event)"></textarea>
 					<!--<i-input type="textarea" v-model="chat" :autosize="{minRows: 3,maxRows: 3}" placeholder="please input something..."></i-input>-->
 				</div>
-					<i-button style="position: relative;float: right; right: 5px;bottom: 28px;" type="primary" @click="ok">send</i-button>
+				<i-button class="sendButton" type="primary" @click="ok">send</i-button>
 			</div>
 			<template v-if="!detile">
 				<div id="banner_full">

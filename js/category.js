@@ -197,7 +197,6 @@ var dragcc = new Vue({
 	},
 	updated: function(){
 		var content = document.getElementById('drag_content');
-		console.log(content.scrollTop,content.scrollHeight);
 		content.scrollTop = content.scrollHeight;
 //		alert(1);
 	}
