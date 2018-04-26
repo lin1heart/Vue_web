@@ -185,11 +185,15 @@ var category = new Vue({
 	}
 })
 
+//						<a  :title="index.chatname">
+//						</a>
 var dragcc = new Vue({
 	el: '#drag_content',
 	template: `<div id="drag_content" class="content">
 					<ul class="chat-thread">
-						<li :class="index.showli" v-for="index in chatContent">{{ index.content }}</li>
+							<li v-for="index in chatContent" :class="index.showli">{{ index.content }}
+							</li>
+							<p class="chat-time">{{ index.time }}</p>
 					</ul>
 				</div>`,
 	data: {
@@ -447,14 +451,18 @@ function showResponse(res) {
 		if(name == category.$data.login_user) {
 			dragcc.$data.chatContent.push({
 				showli: 'myself',
-				content: cont
+				content: cont,
+//				chatname: name,
+				time: time
 			})
 //			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
 //			category.$data.room += '<h4>' + name + '</h4>' + '&nbsp' + time + "\n" + cont + "\n";
 		} else {
 			dragcc.$data.chatContent.push({
 				content: cont,
-				showli: 'others'
+				showli: 'others',
+//				chatname: name,
+				time: time
 			})
 		}
 	}
