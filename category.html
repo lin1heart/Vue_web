@@ -33,7 +33,7 @@
 				<div class="resizeLB"></div>
 				<div id="drag_content" class="content"></div>
 				<div class="inputArea">
-					<textarea v-model="chat"></textarea>
+					<textarea v-model="chat" @keydown="sendMess($event)"></textarea>
 					<!--<i-input type="textarea" v-model="chat" :autosize="{minRows: 3,maxRows: 3}" placeholder="please input something..."></i-input>-->
 				</div>
 					<i-button style="position: relative;float: right; right: 5px;bottom: 28px;" type="primary" @click="ok">send</i-button>
@@ -127,22 +127,6 @@
 					<!--</div>-->
 				</div>
 			</Modal>
-			<!--<Modal v-model="chatRoom" title="chatRoom">
-				<div>
-					<i-form ref="chatRoomForm" :model="chatRoomForm">
-				        <Form-Item prop="room">
-				            <i-input type="textarea" v-model="chatRoomForm.room" :autosize="{minRows: 5,maxRows: 5}" readonly></i-input>
-				        </Form-Item>
-				        <Form-Item prop="chat">
-				            <i-input type="textarea" v-model="chatRoomForm.chat" :autosize="{minRows: 5,maxRows: 5}" placeholder="please input something..."></i-input>
-				        </Form-Item>
-				    </i-form>
-			    </div>
-			    <div slot="footer">
-			    	<i-button size="large" type="primary" @click="ok">send</i-button>
-			    </div>
-			</Modal>-->
-
 			<template v-if="!detile">
 				<div id="image_container" :style="{marginLeft: totalLeft,'width': totalWidth}">
 					<section class="image_list_container">
