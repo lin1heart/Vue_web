@@ -13,20 +13,6 @@
 
 	<body>
 		<section id="category" class="full">
-			<!--<div id="div1" :style="{'display': chatstyle}">
-				<div id="chatroom_header">
-					<h3>chatroom</h3>
-				</div>
-				<div style="width: 100%;height: 100%;background-color: rgb(195,221,236);">
-					<div id="chatroom_content"></div>
-		            <i-input type="textarea" v-model="room" :autosize="{minRows: 5,maxRows: 5}" readonly></i-input>
-		            <i-input type="textarea" v-model="chat" :autosize="{minRows: 5,maxRows: 5}" placeholder="please input something..."></i-input>
-				</div>
-					<div class="chatroom_footer">
-						<i-button style="margin: 0 15px;" type="primary" @click="close">close</i-button>
-						<i-button style="margin: 0 15px;" type="primary" @click="ok">send</i-button>
-					</div>
-			</div>-->
 			<div id="drag" :style="{'display': chatstyle}">
 				<div class="title">
 					<h2>ChatRoom</h2>
@@ -45,17 +31,12 @@
 				<div class="resizeTR"></div>
 				<div class="resizeBR"></div>
 				<div class="resizeLB"></div>
-				<div id="drag_content" class="content">
-					<ul class="chat-thread">
-						<li :class="index.showli" v-for="index in chatContent">{{ index.content }}</li>
-					</ul>
+				<div id="drag_content" class="content"></div>
+				<div class="inputArea">
+					<textarea v-model="chat"></textarea>
+					<!--<i-input type="textarea" v-model="chat" :autosize="{minRows: 3,maxRows: 3}" placeholder="please input something..."></i-input>-->
 				</div>
-				<div style="padding: 5px;">
-					<i-input type="textarea" v-model="chat" :autosize="{minRows: 3,maxRows: 3}" placeholder="please input something..."></i-input>
-				</div>
-				<div style="padding: 0 5px 5px 5px;">
-					<i-button type="primary" @click="ok">send</i-button>
-				</div>
+					<i-button style="position: relative;float: right; right: 5px;bottom: 28px;" type="primary" @click="ok">send</i-button>
 			</div>
 			<template v-if="!detile">
 				<div id="banner_full">

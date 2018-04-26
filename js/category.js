@@ -26,10 +26,10 @@ function getimageList() {
 }
 
 $(window).scroll(function() {
-	var scrollTop = $(this).scrollTop();
-	var scrollHeight = $(document).height();
+	var sTop = $(this).scrollTop();
+	var sHeight = $(document).height();
 	var windowHeight = $(this).height();
-	if(scrollTop + windowHeight >= scrollHeight && category.status === 'loaded') {
+	if(sTop + windowHeight >= sHeight && category.status === 'loaded') {
 		getimageList();
 	}
 });
@@ -45,7 +45,7 @@ var category = new Vue({
 	data: {
 		chatstyle: 'none',
 		//		chatRoom: false,
-		chatContent:[],
+//		chatContent:[],
 		signin: false,
 		signup: false,
 //		room: '',
@@ -181,9 +181,6 @@ var category = new Vue({
 				}
 			}
 		},
-//		close: function() {
-//			this.chatstyle = 'none';
-//		},
 		chatroom: function() {
 			if(this.$data.login) {
 				chatroom();
@@ -196,7 +193,32 @@ var category = new Vue({
 			}
 		}
 	}
+//	updated: function(){
+//		var content = document.getElementById('drag_content');
+//		console.log(content.scrollTop,content.scrollHeight);
+//		content.scrollTop = content.scrollHeight;
+////		alert(1);
+//	}
 })
+
+var dragcc = new Vue({
+	el: '#drag_content',
+	template: `<div id="drag_content" class="content">
+					<ul class="chat-thread">
+						<li :class="index.showli" v-for="index in chatContent">{{ index.content }}</li>
+					</ul>
+				</div>`,
+	data: {
+		chatContent:[]
+	},
+	updated: function(){
+		var content = document.getElementById('drag_content');
+		console.log(content.scrollTop,content.scrollHeight);
+		content.scrollTop = content.scrollHeight;
+//		alert(1);
+	}
+})
+
 
 function showDetail(index) {
 	if(index != CHOICED_ID) {
@@ -423,24 +445,35 @@ function showResponse(res) {
 		var cont = res.data.content;
 		var time = getDate(res.data.timestamp);
 		time = timeStamp2String(time, "yyyy-MM-dd hh:mm:ss");
-		var content = document.getElementById('content');
+		var content = document.getElementById('drag_content');
 		if(name == category.$data.login_user) {
-			category.$data.chatContent.push({
+			dragcc.$data.chatContent.push({
 				showli: 'myself',
 				content: cont
 			})
 //			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
 //			category.$data.room += '<h4>' + name + '</h4>' + '&nbsp' + time + "\n" + cont + "\n";
 		} else {
-			category.$data.chatContent.push({
+			dragcc.$data.chatContent.push({
 				content: cont,
 				showli: 'others'
 			})
 //			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
 //			category.$data.room += '<h4>' + name + '</h4>' + '&nbsp' + time + "\n" + cont + "\n";
 		}
+//		console.log(content.scrollTop,content.scrollHeight);
+		
+//		content.scrollTop = content.scrollHeight;
 	}
 }
+//var scrollDiv = document.getElementById('drag_content');
+//    //绑定事件
+//scrollDiv.addEventListener('scroll', function() {
+//  console.log(scrollDiv.scrollTop);
+//});
+//$('#drag_content').bind("heightChange", function(){
+//	console.log(111);
+//});
 
 /**
  * 字符串日期转日期

@@ -100,6 +100,7 @@ function drag(oDrag,cDrag, handle) {
 	//关闭按钮
 	oClose.onclick = function(){
 		oDrag.style.display = "none";
+		parent.dragcc.$data.chatContent = [];
 	};
 	//阻止冒泡
 	oMin.onmousedown =oMin.ontouchstart = oMax.onmousedown = oMax.ontouchstart = oClose.onmousedown = oClose.ontouchstart = function(event) {
