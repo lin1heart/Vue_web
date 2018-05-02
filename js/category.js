@@ -187,13 +187,13 @@ var category = new Vue({
 
 //						<a  :title="index.chatname">
 //						</a>
+//<p class="chat-time">{{ index.time }}</p>
 var dragcc = new Vue({
 	el: '#drag_content',
 	template: `<div id="drag_content" class="content">
 					<ul class="chat-thread">
 							<li v-for="index in chatContent" :class="index.showli">{{ index.content }}
 							</li>
-							<p class="chat-time">{{ index.time }}</p>
 					</ul>
 				</div>`,
 	data: {
@@ -233,14 +233,17 @@ function showDetail(index) {
 
 function showDetailModel(flag, reload) {
 	if(flag) {
+//		$('#category').css("display", "none");
+		$('#imageDetailModel').css("display", "block");
 		category.$data.detile = true;
 		if(reload) {
+			$('#image_detile_frame').attr('src','imageDetile.html')
 			category.$data.lists = [];
-			doPost("getDetile", {
-				"id": CHOICED_ID
-			});
+			doPost("getDetile", {"id": CHOICED_ID});
 		}
 	} else {
+//		$('#category').css("display", "block");
+		$('#imageDetailModel').css("display", "none");
 		category.$data.detile = false;
 	}
 }

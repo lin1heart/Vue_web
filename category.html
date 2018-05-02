@@ -218,27 +218,9 @@
 					</template>
 				</Affix>
 			</div>
-			<template v-if="detile">
-				<div id="image_detile">
-					<section class="imgs">
-						<div v-for="(list, index) in lists" :key="list" :prop="'lists.' + index + '.value'">
-							<img :src="list.imgurl" :alt="list.id" />
-							<br />
-						</div>
-						<div class="bottom">
-							登陆之后可以查看更多哦!
-						</div>
-					</section>
-					<div class="bottom_style">
-						<section class="container">
-							<span class="item">CopyRight</span>
-							<span class="item">github</span>
-							<span class="item">version</span>
-							<span class="item">contact</span>
-						</section>
-					</div>
-				</div>
-			</template>
+			<div id="imageDetailModel" style="width: 100%; height: 95%; display: none;">
+				<iframe id="image_detile_frame" frameborder="0" style="width: 100%; height: 100%; border: none;"></iframe>
+			</div>
 		</section>
 	</body>
 	<!--<script type="text/javascript" src="http://vuejs.org/js/vue.min.js"></script>-->

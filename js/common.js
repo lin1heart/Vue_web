@@ -31,8 +31,8 @@ function doPost(event, data) {
 		}
 	});
 }
-//var POST_URL = "http://127.0.0.1:8080";
-var POST_URL = "http://13.250.226.195:8080";
+var POST_URL = "http://127.0.0.1:8080";
+//var POST_URL = "http://13.250.226.195:8080";
 
 function invokeEventMethod(event, method, arguments, otherwise) {
 	if(window[event + method] instanceof Function) {
