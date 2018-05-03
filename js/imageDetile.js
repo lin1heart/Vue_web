@@ -5,7 +5,7 @@ $(function() {
 var image_detile = new Vue({
 	el:'#image_detile',
 	data:{
-		pic:[]
+		lists:[]
 	},
 	methods:{
 		back: function(){
@@ -30,7 +30,7 @@ function getDetileResponse(response){
 	if(response.code == "200") {
 		if(response.data){
 			for(var i = 0; i < response.data.length; i++) {
-				image_detile.$data.pic.push({
+				image_detile.$data.lists.push({
 					imgurl: parent.IMAGE_URL + response.data[i].url,
 					id: response.data[i].imageListId
 				})

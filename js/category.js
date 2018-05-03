@@ -1,6 +1,7 @@
 var IMAGE_URL = 'http://13.250.226.195:8888/dbImage/';
 //var WS_URL = "ws://127.0.0.1:8080/ws";
-var WS_URL = "ws://13.250.226.195:8080/ws";
+//var WS_URL = "ws://13.250.226.195:8080/ws";
+var WS_URL = "ws://13.250.226.195/ws";
 var isClient = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
 var listNum = 0;
 var chatConnect = 0;
@@ -10,9 +11,6 @@ $(function() {
 	doPost('version');
 	getimageList();
 	connect();
-	//	bindResize(document.getElementById('div1'));
-	//	doPost("register",{"username":"333","password":"22","mail":"406644209@qq.com"});
-	//	doPost('login',{"username":"111","password":"123"});
 })
 
 function getimageList() {
@@ -111,7 +109,6 @@ var category = new Vue({
 		totalLeft: isClient ? 0 : '15%',
 		pic: [],
 		status: 'loaded',
-		lists: [], //image_detile
 		detile: false
 	},
 	methods: {
@@ -233,22 +230,23 @@ function showDetail(index) {
 
 function showDetailModel(flag, reload) {
 	if(flag) {
-//		$('#category').css("display", "none");
+		$('#main').css("overflow-y","hidden");
+		$('#chatfix').css({"bottom":"120px","right":"30px"});
+		$('#menufix').css({"bottom":"70px","right":"30px"});
 		$('#imageDetailModel').css("display", "block");
 		category.$data.detile = true;
 		if(reload) {
 			$('#image_detile_frame').attr('src','imageDetile.html')
-			category.$data.lists = [];
-			doPost("getDetile", {"id": CHOICED_ID});
 		}
 	} else {
-//		$('#category').css("display", "block");
+		$('#chatfix').css({"bottom":"60px","right":"15px"});
+		$('#menufix').css({"bottom":"10px","right":"15px"});
 		$('#imageDetailModel').css("display", "none");
+		$('#main').css("overflow-y","auto");
 		category.$data.detile = false;
 	}
 }
 
-//alert(image_lsit.totalWidth + image_lsit.totalLeft + isClient);
 /*******************version请求*******************************/
 function versionRequest(request, form) {
 	request.head.bid = "user";
@@ -455,16 +453,12 @@ function showResponse(res) {
 			dragcc.$data.chatContent.push({
 				showli: 'myself',
 				content: cont,
-//				chatname: name,
 				time: time
 			})
-//			content.innerHTML = '<h2>' + name + '</h2>' + '&nbsp' + time + "\n" + cont + "\n";
-//			category.$data.room += '<h4>' + name + '</h4>' + '&nbsp' + time + "\n" + cont + "\n";
 		} else {
 			dragcc.$data.chatContent.push({
 				content: cont,
 				showli: 'others',
-//				chatname: name,
 				time: time
 			})
 		}
