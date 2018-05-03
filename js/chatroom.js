@@ -30,12 +30,12 @@ function drag(oDrag,cDrag, handle) {
 	var oClose = get.byClass("close", oDrag)[0];
 	handle = handle || oDrag;
 	handle.style.cursor = "move";
-	handle.onmousedown = handle.ontouchstart = function(event) {
+	handle.onmousedown = function(event) {
 		var event = event || window.event;
 		disX = event.clientX - oDrag.offsetLeft;
 		disY = event.clientY - oDrag.offsetTop;
 
-		document.onmousemove = document.ontouchmove = function(event) {
+		document.onmousemove = function(event) {
 			var event = event || window.event;
 			var iL = event.clientX - disX;
 			var iT = event.clientY - disY;
@@ -53,9 +53,9 @@ function drag(oDrag,cDrag, handle) {
 			return false
 		};
 
-		document.onmouseup = document.ontouchend = function() {
-			document.onmousemove = document.ontouchmove = null;
-			document.onmouseup = document.ontouchend = null;
+		document.onmouseup = function() {
+			document.onmousemove = null;
+			document.onmouseup = null;
 			this.releaseCapture && this.releaseCapture()
 		};
 		this.setCapture && this.setCapture();
@@ -114,7 +114,7 @@ function drag(oDrag,cDrag, handle) {
   改变大小函数
  +-------------------------- */
 function resize(oParent, handle, isLeft, isTop, lockX, lockY) {
-	handle.onmousedown = handle.ontouchstart = function(event) {
+	handle.onmousedown = function(event) {
 		var event = event || window.event;
 		var disX = event.clientX - handle.offsetLeft;
 		var disY = event.clientY - handle.offsetTop;
@@ -126,7 +126,7 @@ function resize(oParent, handle, isLeft, isTop, lockX, lockY) {
 		var cDragTop = cDrag.offsetTop;
 		var cDragLeft = cDrag.offsetLeft;
 
-		document.onmousemove = document.ontouchmove = function(event) {
+		document.onmousemove = function(event) {
 			var event = event || window.event;
 
 			var iL = event.clientX - disX;
@@ -147,13 +147,13 @@ function resize(oParent, handle, isLeft, isTop, lockX, lockY) {
 			iH > maxH && (iH = maxH);
 			lockY || ((oParent.style.height = iH + "px") &&(cDrag.style.height = iH -157 + "px"));
 
-			if((isLeft && iW == dragMinWidth) || (isTop && iH == dragMinHeight)) document.onmousemove = document.ontouchmove = null;
+			if((isLeft && iW == dragMinWidth) || (isTop && iH == dragMinHeight)) document.onmousemove = null;
 
 			return false;
 		};
-		document.onmouseup = document.ontouchend = function() {
-			document.onmousemove = document.ontouchmove = null;
-			document.onmouseup = document.ontouchend = null;
+		document.onmouseup = function() {
+			document.onmousemove = null;
+			document.onmouseup = null;
 		};
 		return false;
 	}
