@@ -324,7 +324,7 @@ function registerRequest(request, form) {
 function registerResponse(response) {
 	if(response.code == "200") {
 		console.log("register:" + response);
-		category.$Message.success(getMessage(response));
+		category.$Message.success("注册成功！快去邮箱激活吧！");
 	} else {
 		console.log("register Response" + getMessage(response));
 	}
