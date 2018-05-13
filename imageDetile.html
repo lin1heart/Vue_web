@@ -14,6 +14,9 @@
 				<div v-for="(list, index) in lists" :key="list" :prop="'lists.' + index + '.value'">
 					<img :src="list.imgurl" :alt="list.id" />
 					<br />
+					<div style="z-index: 1000;height: 100%;width: 100%;display: flex;">
+						123
+					</div>
 				</div>
 				<div class="bottom">
 					登陆之后可以查看更多哦!

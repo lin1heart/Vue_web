@@ -1,6 +1,6 @@
 var get = {
 	byId: function(id) {
-		return typeof id === "string" ? document.getElementById(id) : id
+		return typeof id === "string" ? document.getElementById(id)||parent.document.getElementById(id) : id
 	},
 	byClass: function(sClass, oParent) {
 		var aClass = [];
@@ -10,11 +10,11 @@ var get = {
 		return aClass
 	},
 	byTagName: function(elem, obj) {
-		return(obj || document).getElementsByTagName(elem)
+		return(obj || document || parent.document).getElementsByTagName(elem)
 	}
 };
 if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
-	var phoneDrag = document.getElementById('drag');
+	var phoneDrag = document.getElementById('drag')||parent.document.getElementById("drag");
 	phoneDrag.style.left = '10%';
 }
 var dragMinWidth = 300;
@@ -122,7 +122,7 @@ function resize(oParent, handle, isLeft, isTop, lockX, lockY) {
 		var iParentLeft = oParent.offsetLeft;
 		var iParentWidth = oParent.offsetWidth;
 		var iParentHeight = oParent.offsetHeight;
-		var cDrag = document.getElementById("drag_content");
+		var cDrag = document.getElementById("drag_content") || parent.document.getElementById("drag_content");
 		var cDragTop = cDrag.offsetTop;
 		var cDragLeft = cDrag.offsetLeft;
 
@@ -159,8 +159,8 @@ function resize(oParent, handle, isLeft, isTop, lockX, lockY) {
 	}
 };
 window.onload = window.onresize = function() {
-	var oDrag = document.getElementById("drag");
-	var cDrag = document.getElementById("drag_content");
+	var oDrag = document.getElementById("drag") || parent.document.getElementById("drag");
+	var cDrag = document.getElementById("drag_content") || parent.document.getElementById("drag_content");
 	var oTitle = get.byClass("title", oDrag)[0];
 	var oL = get.byClass("resizeL", oDrag)[0];
 	var oT = get.byClass("resizeT", oDrag)[0];
