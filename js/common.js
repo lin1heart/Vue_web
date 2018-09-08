@@ -17,7 +17,7 @@ function doPost(event, data) {
 		da = "";
 	}
 	$.ajax({
-		url: POST_URL + bid + fid,
+		url: "http://"+POST_URL + ":10180" + bid + fid,
 		type: type,
 		async:true,
 		contentType: 'application/x-www-form-urlencoded',
@@ -32,7 +32,7 @@ function doPost(event, data) {
 	});
 }
 //var POST_URL = "http://127.0.0.1:8080";
-var POST_URL = "http://13.250.226.195";
+var POST_URL = "47.96.123.41";
 //var POST_URL = "fe2o3.club";
 
 function invokeEventMethod(event, method, arguments, otherwise) {
